@@ -225,7 +225,10 @@ def build_branch(
         for start in range(0, len(drop), 200):
             git("rm", "--cached", "--quiet", "--", *drop[start : start + 200], index=index)
         tree = git("write-tree", index=index)
-        commit = git("commit-tree", tree, "-p", git("rev-parse", SOURCE_BRANCH), "-m", message)
+        # Parent must be `source`, not SOURCE_BRANCH: with --from, taking main as
+        # the parent grafts main's history onto a snapshot of someone else's tree,
+        # and crashes outright in a checkout that has no local main at all.
+        commit = git("commit-tree", tree, "-p", git("rev-parse", source), "-m", message)
     git("branch", "--force", name, commit)
     return commit
 
