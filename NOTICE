@@ -1,0 +1,50 @@
+Building and Measuring an Agent — Politecnico di Milano lab material
+
+================================================================================
+Code
+================================================================================
+Licensed under the MIT Licence. See LICENSE.
+
+================================================================================
+Prose, notebooks and documentation
+================================================================================
+Licensed under Creative Commons Attribution 4.0 International (CC-BY-4.0).
+https://creativecommons.org/licenses/by/4.0/
+
+================================================================================
+Document corpus — data/docs/
+================================================================================
+42 documents from the CIA's declassified STARGATE collection (remote viewing
+research, 1970s-1995), retrieved from the Internet Archive.
+
+  Source:    https://archive.org  (identifiers CIA-RDP96-*)
+  Origin:    US Central Intelligence Agency, released under FOIA
+  Status:    Work of the US Government — public domain in the United States
+             (17 U.S.C. § 105)
+
+The full collection runs to 12,301 files and 89,901 pages. The 42 shipped here
+were selected for variety of document type and for having usable OCR text; see
+data/corpus_manifest.json for identifiers, titles and themes.
+
+Text is raw OCR of scanned originals. It contains recognition errors, broken
+words and page furniture. That is deliberate: it is what real retrieval
+material looks like.
+
+================================================================================
+Sighting reports — data/nuforc.parquet
+================================================================================
+~60,000 UFO sighting reports.
+
+  Source:    CORGIS Datasets Project, "UFO Sightings"
+             https://corgis-edu.github.io/corgis/csv/ufo_sightings/
+  Upstream:  Reports collected by the National UFO Reporting Center (NUFORC)
+  Use:       Educational
+
+Columns were renamed and retyped by scripts/fetch_data.py; the underlying
+records are unmodified.
+
+================================================================================
+Nothing in this repository asserts that any phenomenon described in these
+documents is real. The documents record what their authors claimed at the time.
+Telling those two things apart is, in fact, the point of session 2.
+================================================================================

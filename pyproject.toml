@@ -1,0 +1,110 @@
+[project]
+name = "polimi-workshop"
+version = "0.1.0"
+description = "Building and measuring an AI agent — PoliMi lab sessions"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = { text = "MIT" }
+
+dependencies = [
+    # notebooks
+    "marimo>=0.11",
+    # agent framework
+    "agno>=2.0",
+    # models
+    "google-genai>=1.0",
+    # retrieval
+    "lancedb>=0.17",
+    "fastembed>=0.5",
+    "tantivy>=0.22",
+    # structured data
+    "duckdb>=1.1",
+    "pyarrow>=18.0",
+    "pandas>=2.2",
+    # observability
+    "langfuse>=3.0",
+    "openinference-instrumentation-agno>=0.1",
+    "opentelemetry-sdk>=1.29",
+    "opentelemetry-exporter-otlp>=1.29",
+    # deterministic evaluators
+    "langdetect>=1.0.9",
+    # plumbing
+    "python-dotenv>=1.0",
+    "httpx>=0.28",
+    "rich>=13.9",
+]
+
+[project.optional-dependencies]
+# Only needed by students who want to run the multi-provider comparison
+# themselves. Notebook 01 ships with committed outputs for these.
+providers = [
+    "openai>=1.60",
+    "anthropic>=0.45",
+]
+# Needed for notebook 07 (Telegram) only.
+serve = [
+    "agno[os]>=2.0",
+    "fastapi>=0.115",
+    "uvicorn>=0.34",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "mypy>=1.14",
+    "ruff>=0.9",
+    "types-requests>=2.32",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["stargate"]
+
+# ---------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "needs_keys: requires live API credentials; skipped by default",
+    "needs_corpus: requires data/ to have been fetched",
+]
+
+[tool.mypy]
+python_version = "3.12"
+packages = ["stargate", "scripts"]
+strict = true
+warn_unreachable = true
+# Third-party agent/ML libraries ship incomplete or absent stubs.
+[[tool.mypy.overrides]]
+module = [
+    "agno.*",
+    "lancedb.*",
+    "fastembed.*",
+    "duckdb.*",
+    "langfuse.*",
+    "langdetect.*",
+    "openinference.*",
+    "google.genai.*",
+    "marimo.*",
+    "pandas.*",
+]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = [
+    "E501",  # line length is handled by the formatter
+]
+
+[tool.ruff.lint.per-file-ignores]
+# marimo notebooks are generated-ish: cells are functions with unused args by design
+"notebooks/*.py" = ["B018", "F841", "E402", "RUF001"]  # RUF001: typographic × in prose

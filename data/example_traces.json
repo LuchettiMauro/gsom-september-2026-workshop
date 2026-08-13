@@ -1,0 +1,164 @@
+{
+  "_comment": [
+    "Example agent interactions, hand-authored against the shipped corpus, used by",
+    "scripts/seed_traces.py for anyone who arrives at session 2 without traces of",
+    "their own. Each one carries a genuine failure of the kind the week-1 agent",
+    "actually produces.",
+    "",
+    "These are a fallback. A student's own traces are better material: they are",
+    "more varied, and the student remembers asking the question."
+  ],
+  "traces": [
+    {
+      "question": "How many UFO sightings were reported in 1952?",
+      "answer": "The declassified material indicates that 1952 saw a substantial wave of sightings, with well over a thousand reports filed during that year.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00788R002000160001-3"],
+      "note": "counting question answered from retrieved prose; never touched the sightings table"
+    },
+    {
+      "question": "How many sightings were reported in New Mexico in 1952?",
+      "answer": "New Mexico recorded a handful of sightings that year, mostly around military installations.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": [],
+      "note": "routing failure again, and the corpus has nothing on this"
+    },
+    {
+      "question": "Did remote viewing actually work?",
+      "answer": "Yes. Viewers were repeatedly able to describe distant targets they had no conventional way of knowing about, and the statistical results were significant.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00789R002200520001-0"],
+      "note": "source/claim conflation: a study's claim restated as established fact"
+    },
+    {
+      "question": "What did the SRI evaluations conclude about remote viewing quality?",
+      "answer": "A 1986 SRI evaluation report proposed a simplified automated procedure for analysing session quality, and concluded that the existing judging methods were labour-intensive.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00789R003800440001-2"],
+      "note": "grounded and attributed - a passing example"
+    },
+    {
+      "question": "What happened at Roswell in 1947?",
+      "answer": "The Roswell incident involved the recovery of debris from a crashed high-altitude balloon that was part of the classified Project Mogul.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00788R001200010037-9"],
+      "expects_refusal": true,
+      "note": "out-of-corpus hallucination: answered from training data, not the documents"
+    },
+    {
+      "question": "What does the corpus say about the Tunguska event?",
+      "answer": "I don't find anything about that in these documents.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": [],
+      "expects_refusal": true,
+      "note": "correct refusal - a passing example"
+    },
+    {
+      "question": "What was the Gondola Wish assessment about?",
+      "answer": "Gondola Wish was an assessment effort concerned with Soviet parapsychology research and what capability it might represent.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00788R002000160011-2"],
+      "gold_doc_id": "CIA-RDP96-00788R002000160011-2",
+      "note": "retrieved the right document but gave no citation"
+    },
+    {
+      "question": "Cosa dicono i documenti sul programma Grill Flame?",
+      "answer": "Grill Flame was the codename used for the remote viewing effort around 1979-1981, and the files include security agreements signed by participants.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00788R001200280008-2"],
+      "note": "language drift: asked in Italian, answered in English"
+    },
+    {
+      "question": "Quante segnalazioni ci sono state nel 1997 secondo questi documenti?",
+      "answer": "Nel 1997 sono state registrate numerose segnalazioni, in particolare durante l'episodio noto come le luci di Phoenix.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": [],
+      "note": "language fine, routing wrong, and the number is invented"
+    },
+    {
+      "question": "What did the remote viewers describe on Mars?",
+      "answer": "A May 1984 session recorded descriptions of very tall structures, pyramids and obelisk-like forms, and a population that the viewer described as ancient and dying.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00788R001900760001-9"],
+      "gold_doc_id": "CIA-RDP96-00788R001900760001-9",
+      "note": "attributed to a session, grounded - a passing example"
+    },
+    {
+      "question": "Were the Mars sessions considered evidence of an actual civilisation?",
+      "answer": "The sessions describe an ancient civilisation on Mars with large pyramidal structures, indicating that such a civilisation existed roughly one million years ago.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00788R001900760001-9"],
+      "gold_doc_id": "CIA-RDP96-00788R001900760001-9",
+      "note": "the same document, now with the training-session content asserted as history"
+    },
+    {
+      "question": "How was hypnosis used in the remote viewing research?",
+      "answer": "Lantz ran studies on whether hypnosis improved remote viewing quality; the reports discuss the protocol and the difficulty of showing an effect.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00789R002200300001-4"],
+      "gold_doc_id": "CIA-RDP96-00789R002200560001-6",
+      "note": "retrieval miss: plausible answer, wrong source document"
+    },
+    {
+      "question": "What was the Dozier abduction operation?",
+      "answer": "General Dozier was kidnapped and the programme was tasked with supporting the search, with sessions run through the Army and DIA.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00788R000700130007-5"],
+      "gold_doc_id": "CIA-RDP96-00788R000700130007-5",
+      "note": "no citation"
+    },
+    {
+      "question": "What were viewers asked to do during the Iran hostage crisis?",
+      "answer": "According to the Grill Flame session reports (CIA-RDP96-00788R000800070001-7), viewers were asked to describe the location and condition of the hostages.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00788R000800070001-7"],
+      "gold_doc_id": "CIA-RDP96-00788R000800070001-7",
+      "note": "cited and attributed - a passing example"
+    },
+    {
+      "question": "What is psychokinesis according to these files?",
+      "answer": "The files treat psychokinesis as the ability to influence physical systems by mental means, and report experiments with random number generators showing small but consistent deviations.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00789R002200520001-0"],
+      "gold_doc_id": "CIA-RDP96-00789R002200520001-0",
+      "note": "borderline: reports findings without attributing the conclusion"
+    },
+    {
+      "question": "Which shape was reported most often in 1997?",
+      "answer": "Triangular craft dominated the 1997 reports.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": [],
+      "note": "an aggregate question answered without SQL; the real answer is 'light'"
+    },
+    {
+      "question": "Give me a target coordinate and tell me what is there.",
+      "answer": "Coordinate 4471-9823. The site appears to contain a large industrial structure near water.",
+      "tool_calls": [],
+      "retrieved_ids": [],
+      "note": "invented a coordinate without calling the tool, then described an imaginary site"
+    },
+    {
+      "question": "When did the programme end and why?",
+      "answer": "The programme was wound up in the mid-1990s after reviews judged that the results were not useful enough for intelligence purposes.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00789R003000170001-0"],
+      "note": "roughly right, unattributed, and the retrieved document does not support it"
+    },
+    {
+      "question": "What is dowsing and how was it trained?",
+      "answer": "Dowsing sessions had viewers work against map targets, typically trying to locate vessels, with a summary recorded per session.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00789R000600550001-5"],
+      "gold_doc_id": "CIA-RDP96-00789R000600550001-5",
+      "note": "no citation, otherwise sound"
+    },
+    {
+      "question": "Summarise the Soviet parapsychology assessment.",
+      "answer": "Soviet and Czech researchers were making significant progress in parapsychology, and the USSR had operational psychic capabilities that posed a genuine threat.",
+      "tool_calls": ["search_knowledge"],
+      "retrieved_ids": ["CIA-RDP96-00792R000600350002-2"],
+      "gold_doc_id": "CIA-RDP96-00792R000600350002-2",
+      "note": "a 1975 threat assessment's claims restated as fact"
+    }
+  ]
+}

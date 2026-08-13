@@ -1,0 +1,258 @@
+{
+  "source": "https://archive.org  (CIA CREST / STARGATE collection, US Government work, public domain)",
+  "text_url_template": "https://archive.org/download/{id}/{id}_djvu.txt",
+  "documents": [
+    {
+      "id": "CIA-RDP96-00788R002000160001-3",
+      "title": "GONDOLA WISH ASSESSMENT REPORT (SOVIET PARAPSYCHOLOGY)",
+      "theme": "assessment-gondola",
+      "chars": 14264
+    },
+    {
+      "id": "CIA-RDP96-00788R002000160010-3",
+      "title": "GONDOLA WISH ASSESSMENT REPORT (SOVIET PARAPSYCHOLOGY)",
+      "theme": "assessment-gondola",
+      "chars": 2127
+    },
+    {
+      "id": "CIA-RDP96-00788R002000160007-7",
+      "title": "GONDOLA WISH ASSESSMENT REPORT (SOVIET PARAPSYCHOLOGY)",
+      "theme": "assessment-soviet",
+      "chars": 2395
+    },
+    {
+      "id": "CIA-RDP96-00788R002000160011-2",
+      "title": "GONDOLA WISH ASSESSMENT REPORT (SOVIET PARAPSYCHOLOGY)",
+      "theme": "assessment-soviet",
+      "chars": 12149
+    },
+    {
+      "id": "CIA-RDP96-00792R000600350002-2",
+      "title": "1975 SOVIET AND CZECH PARAPSYCHOLOGY RESEARCH",
+      "theme": "assessment-soviet",
+      "chars": 16320
+    },
+    {
+      "id": "CIA-RDP96-00788R000700130007-5",
+      "title": "8125 - DIA/ARMY GRILL FLAME SUPPORT TO BG DOZIER ABDUCTION. DEPT. OF ARMY BG DOZIER KIDNAPPING",
+      "theme": "operations-dozier",
+      "chars": 4961
+    },
+    {
+      "id": "CIA-RDP96-00788R000700130020-0",
+      "title": "8125 - DIA/ARMY GRILL FLAME SUPPORT TO BG DOZIER ABDUCTION. DEPT. OF ARMY BG DOZIER KIDNAPPING",
+      "theme": "operations-dozier",
+      "chars": 2147
+    },
+    {
+      "id": "CIA-RDP96-00788R000800070001-7",
+      "title": "IRAN HOSTAGE SITUATION GRILL FLAME RV SESSION12, VIEWER 27.5",
+      "theme": "operations-iran",
+      "chars": 20490
+    },
+    {
+      "id": "CIA-RDP96-00788R000800150001-8",
+      "title": "IRAN HOSTAGE SITUATION GRILL FLAME REMOTE VIEWING (RV) SESSION CC21, VIEWER 07",
+      "theme": "operations-iran",
+      "chars": 41203
+    },
+    {
+      "id": "CIA-RDP96-00788R000800190002-3",
+      "title": "IRAN HOSTAGE SITUATION GRILL FLAME REMOTE VIEWER SESSION CC25, VIEWER 19.5",
+      "theme": "operations-iran",
+      "chars": 7075
+    },
+    {
+      "id": "CIA-RDP96-00788R000800490001-1",
+      "title": "IRAN HOSTAGE SITUATION GRILL FLAME REMOTE VIEWING SESSION CC58, VIEWER 07",
+      "theme": "operations-iran",
+      "chars": 22304
+    },
+    {
+      "id": "CIA-RDP96-00789R003600050003-5",
+      "title": "OPS PROJ: 9095, DATE: 18-20 JUL 90, VIEWER SESSION SUBMARINE RE: VESSELS/DRUGS, SUB PROJECTS NOTATED: QTS-5 18 JUL 90, 9QTS-5 19 JUL 90, 9",
+      "theme": "operations-narcotics",
+      "chars": 4053
+    },
+    {
+      "id": "CIA-RDP96-00789R003600050010-7",
+      "title": "OPS PROJ: 9095, DATE: 18-20 JUL 90, VIEWER SESSION SUBMARINE RE: VESSELS/DRUGS, SUB PROJECTS NOTATED: QTS-5 18 JUL 90, 9QTS-5 19 JUL 90', 'OPS PROJ: 9",
+      "theme": "operations-narcotics",
+      "chars": 1984
+    },
+    {
+      "id": "CIA-RDP96-00789R003600050011-6",
+      "title": "OPS PROJ: 9095, DATE: 18-20 JUL 90, VIEWER SESSION SUBMARINE RE: VESSELS/DRUGS, SUB PROJECTS NOTATED: QTS-5 18 JUL 90, 9QTS-5 19 JUL 90, 9",
+      "theme": "operations-narcotics",
+      "chars": 2299
+    },
+    {
+      "id": "CIA-RDP96-00788R001200010037-9",
+      "title": "507-02 GRILL FLAME SECURITY AGREEMENT",
+      "theme": "programme-grillflame",
+      "chars": 2223
+    },
+    {
+      "id": "CIA-RDP96-00788R001200280008-2",
+      "title": "GRILL FLAME SECURITY AGREEMENTS 1979-1981",
+      "theme": "programme-grillflame",
+      "chars": 2426
+    },
+    {
+      "id": "CIA-RDP96-00788R001200280031-6",
+      "title": "GRILL FLAME SECURITY AGREEMENTS 1979-1981",
+      "theme": "programme-grillflame",
+      "chars": 2427
+    },
+    {
+      "id": "CIA-RDP96-00789R002200520001-0",
+      "title": "EVIDENCE FOR CONSCIOUSNESS-RELATED ANOMALIES IN RANDOM PHYSICAL SYSTEMS, FOUNDATIONS OF PHYSICS, RAAIN & NELSON 12 JUNE 1989",
+      "theme": "programme-random",
+      "chars": 42622
+    },
+    {
+      "id": "CIA-RDP96-00789R000100110004-5",
+      "title": "8602 (SUN STREAK) 3 X 5 TASKING CARDS, OPERATIONS REPORT, TARGETING DATA, NOTES COMMENTS, DRAWING & PROCEDURES",
+      "theme": "programme-sunstreak",
+      "chars": 2628
+    },
+    {
+      "id": "CIA-RDP96-00789R000100110005-4",
+      "title": "8602 (SUN STREAK) 3 X 5 TASKING CARDS, OPERATIONS REPORT, TARGETING DATA, NOTES COMMENTS, DRAWING & PROCEDURES",
+      "theme": "programme-sunstreak",
+      "chars": 2866
+    },
+    {
+      "id": "CIA-RDP96-00789R000100110007-2",
+      "title": "8602 (SUN STREAK) 3 X 5 TASKING CARDS, OPERATIONS REPORT, TARGETING DATA, NOTES COMMENTS, DRAWING & PROCEDURES",
+      "theme": "programme-sunstreak",
+      "chars": 6085
+    },
+    {
+      "id": "CIA-RDP96-00787R000300280001-0",
+      "title": "TARGET & SENDER DEPENDENCIES IN ANOMALOUS COGNITION EXPERIMENTS - JOURNAL OF PARAPSYCHOLOGY SEPT 1994",
+      "theme": "research-cognition",
+      "chars": 44484
+    },
+    {
+      "id": "CIA-RDP96-00789R003200220001-2",
+      "title": "TARGET AND SENDER DEPENDENCIES IN ANOMALOUS COGNITION EXPERIMENTS LANTZ, LUKE MAY 29 AUG 94",
+      "theme": "research-cognition",
+      "chars": 39408
+    },
+    {
+      "id": "CIA-RDP96-00789R003200270001-7",
+      "title": "FEEDBACK CONSIDERATIONS IN ANOMALOUS COGNITION EXPERIMENTS MAY, LANTZ SAIC 29 NOV 1994",
+      "theme": "research-cognition",
+      "chars": 35699
+    },
+    {
+      "id": "CIA-RDP96-00788R001800050001-8",
+      "title": "A REMOTE VIEWING EVALUATION PROTOCOL EDWIN C. MAY DECEMBER 1982",
+      "theme": "research-evaluation",
+      "chars": 30459
+    },
+    {
+      "id": "CIA-RDP96-00788R001800080001-5",
+      "title": "A REMOTE VIEWING EVALUATION PROTOCOL (DECLASSIFIED VERSION) SRI JULY 1983",
+      "theme": "research-evaluation",
+      "chars": 34189
+    },
+    {
+      "id": "CIA-RDP96-00788R001800090001-4",
+      "title": "A REMOTE VIEWING EVALUATION PROTOCOL EDWIN C. MAY SRI JULY 1983",
+      "theme": "research-evaluation",
+      "chars": 28761
+    },
+    {
+      "id": "CIA-RDP96-00789R002200300001-4",
+      "title": "THE EFFECTS OF HYPNOSIS ON REMOTE VIEWING QUALITY, LANTZ SRI DEC 1988",
+      "theme": "research-hypnosis",
+      "chars": 20796
+    },
+    {
+      "id": "CIA-RDP96-00789R002200310001-3",
+      "title": "THE EFFECTS OF HYPNOSIS ON REMOTE VIEWING QUALITY, (SANITIZED COPY) DECEMBER 1988",
+      "theme": "research-hypnosis",
+      "chars": 6831
+    },
+    {
+      "id": "CIA-RDP96-00789R002200560001-6",
+      "title": "AN EFFORT TO IMPROVE REMOTE VIEWING QUALITY USING HYPNOSIS, NEVIN D. LANTZ, OCTOBER 1989",
+      "theme": "research-hypnosis",
+      "chars": 31190
+    },
+    {
+      "id": "CIA-RDP96-00789R002200550001-7",
+      "title": "POSSIBLE ROLE OF INTUITIVE DATA SORTING IN ELECTRODERMAL BIOLOGICAL PSYCHOKINESIS, BRAUD & SCHLITZ",
+      "theme": "research-psychokinesis",
+      "chars": 21788
+    },
+    {
+      "id": "CIA-RDP96-00792R000400350003-3",
+      "title": "PK PSYCHOKINESIS",
+      "theme": "research-psychokinesis",
+      "chars": 1982
+    },
+    {
+      "id": "CIA-RDP96-00792R000400350005-1",
+      "title": "PK PSYCHOKINESIS",
+      "theme": "research-psychokinesis",
+      "chars": 39940
+    },
+    {
+      "id": "CIA-RDP96-00789R000600550001-5",
+      "title": "Session 02. Date 22 Nov 88. Viewer I.D. 095. Dowsing Map Target:",
+      "theme": "training-dowsing",
+      "chars": 2049
+    },
+    {
+      "id": "CIA-RDP96-00789R000600610001-8",
+      "title": "SESSION 02. DATE 28 NOV 88. VIEWER I.D. 025. DOWSING. SUMMARY, MAP TARGET: VESSEL",
+      "theme": "training-dowsing",
+      "chars": 2063
+    },
+    {
+      "id": "CIA-RDP96-00789R001600420001-8",
+      "title": "PROJECT: 6032 TRAINING (DOWSING), VIEWER 095 18 MAY 89",
+      "theme": "training-dowsing",
+      "chars": 2961
+    },
+    {
+      "id": "CIA-RDP96-00788R001900760001-9",
+      "title": "MARS, 1 MILLION BC (TRAINING)",
+      "theme": "training-mars",
+      "chars": 12450
+    },
+    {
+      "id": "CIA-RDP96-00789R003800060001-4",
+      "title": "238 MARS (TRAINING) 29/4/87",
+      "theme": "training-mars",
+      "chars": 3157
+    },
+    {
+      "id": "CIA-RDP96-00789R003800080001-2",
+      "title": "238 MARS (TRAINING) 20/5/87",
+      "theme": "training-mars",
+      "chars": 2863
+    },
+    {
+      "id": "CIA-RDP96-00789R003800150001-4",
+      "title": "232 HIGDON EXPERIENCE UFO ABDUCTION (TRAINING)",
+      "theme": "training-ufo",
+      "chars": 1937
+    },
+    {
+      "id": "CIA-RDP96-00789R003800150002-3",
+      "title": "232 HIGDON EXPERIENCE UFO ABDUCTION (TRAINING)",
+      "theme": "training-ufo",
+      "chars": 2295
+    },
+    {
+      "id": "CIA-RDP96-00789R003800150003-2",
+      "title": "232 HIGDON EXPERIENCE UFO ABDUCTION (TRAINING)",
+      "theme": "training-ufo",
+      "chars": 6353
+    }
+  ]
+}

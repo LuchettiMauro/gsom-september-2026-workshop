@@ -1,0 +1,212 @@
+"""Phase 0 readiness check.
+
+    uv run python scripts/check.py
+
+Verifies every prerequisite by actually using it — a key that parses but does
+not work is exactly the failure this exists to catch. So it makes a real
+(3-token) Gemini call and writes a real Langfuse trace rather than checking
+that the strings are non-empty.
+
+Prints one line to paste into the readiness form.
+"""
+
+from __future__ import annotations
+
+import argparse
+import importlib.util
+import os
+import shutil
+import subprocess
+import sys
+from collections.abc import Callable
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT))
+
+from stargate.config import DOCS_DIR, PARQUET, settings  # noqa: E402
+
+Result = tuple[str, str, str]  # (label, value, detail)
+
+OK = "ok"
+
+
+def _version_of(command: str, *args: str) -> str | None:
+    exe = shutil.which(command)
+    if exe is None:
+        return None
+    try:
+        out = subprocess.run([exe, *args], capture_output=True, text=True, timeout=30, check=False)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    text = (out.stdout or out.stderr).strip().splitlines()
+    if not text:
+        return None
+    parts = text[0].split()
+    return parts[1] if len(parts) > 1 else text[0]
+
+
+# --- individual checks -----------------------------------------------------
+
+
+def check_uv() -> Result:
+    version = _version_of("uv", "--version")
+    return ("uv", version or "MISSING", "" if version else "Install uv — see PHASE0.md step 1.")
+
+
+def check_python() -> Result:
+    v = sys.version_info
+    value = f"{v.major}.{v.minor}.{v.micro}"
+    if (v.major, v.minor) < (3, 11):
+        return ("python", f"{value} TOO-OLD", "Run through `uv run`, which supplies Python 3.12.")
+    return ("python", value, "")
+
+
+def check_marimo() -> Result:
+    found = importlib.util.find_spec("marimo") is not None
+    return ("marimo", OK if found else "MISSING", "" if found else "Run `uv sync`.")
+
+
+def check_cloudflared() -> Result:
+    version = _version_of("cloudflared", "--version")
+    if version is None:
+        return (
+            "cloudflared",
+            "MISSING",
+            "Needed in session 2 — see PHASE0.md step 2. Not fatal for session 1.",
+        )
+    return ("cloudflared", OK, "")
+
+
+def check_data() -> Result:
+    docs = len(list(DOCS_DIR.glob("*.md"))) if DOCS_DIR.exists() else 0
+    if docs == 0 or not PARQUET.exists():
+        return ("data", "MISSING", "Run `uv run python scripts/fetch_data.py`.")
+    return ("data", OK, f"{docs} documents, sightings parquet present")
+
+
+def check_gemini() -> Result:
+    """One real call. Costs about three tokens."""
+    cfg = settings()
+    if not cfg.google_api_key:
+        return ("gemini", "MISSING", "GOOGLE_API_KEY not set — see PHASE0.md step 4.")
+    try:
+        from google import genai
+
+        client = genai.Client(api_key=cfg.google_api_key)
+        response = client.models.generate_content(
+            model=cfg.model, contents="Reply with the single word: ready"
+        )
+        if not getattr(response, "text", None):
+            return ("gemini", "FAILED", "The API returned an empty response.")
+    except Exception as exc:
+        return ("gemini", "FAILED", f"{type(exc).__name__}: {str(exc)[:160]}")
+    return ("gemini", OK, f"model {cfg.model}")
+
+
+def check_langfuse() -> Result:
+    """Authenticate and write one real trace, then print its URL."""
+    cfg = settings()
+    if not cfg.langfuse_configured:
+        return ("langfuse", "MISSING", "Keys not set — see PHASE0.md step 5.")
+    try:
+        from stargate.observability import enable_tracing, flush
+
+        client = enable_tracing(quiet=True)
+        if client is None:
+            return ("langfuse", "FAILED", "Could not create a client.")
+        if not client.auth_check():
+            return ("langfuse", "FAILED", "Credentials rejected. Check both keys and the region.")
+        with client.start_as_current_observation(name="phase-0-check") as span:
+            span.update(input="phase 0", output="ready")
+            url = client.get_trace_url(trace_id=span.trace_id)
+        flush()
+    except Exception as exc:
+        return ("langfuse", "FAILED", f"{type(exc).__name__}: {str(exc)[:160]}")
+    return ("langfuse", OK, f"trace written: {url}")
+
+
+def check_fastembed() -> Result:
+    """Download and run the embedding model, so it is cached before the session."""
+    try:
+        from fastembed import TextEmbedding
+
+        from stargate.config import DEFAULT_EMBEDDER
+
+        model = TextEmbedding(model_name=DEFAULT_EMBEDDER)
+        vector = next(iter(model.embed(["remote viewing"])))
+    except Exception as exc:
+        return ("fastembed", "FAILED", f"{type(exc).__name__}: {str(exc)[:160]}")
+    return ("fastembed", OK, f"{len(vector)}-dimensional vectors, cached locally")
+
+
+def check_telegram() -> Result:
+    cfg = settings()
+    if not cfg.telegram_token:
+        return ("telegram", "MISSING", "Needed in session 2 — see PHASE0.md step 6.")
+    try:
+        import httpx
+
+        response = httpx.get(f"https://api.telegram.org/bot{cfg.telegram_token}/getMe", timeout=20)
+        payload = response.json()
+        if not payload.get("ok"):
+            return ("telegram", "FAILED", str(payload.get("description", ""))[:120])
+        username = payload["result"].get("username", "?")
+    except Exception as exc:
+        return ("telegram", "FAILED", f"{type(exc).__name__}: {str(exc)[:160]}")
+    return ("telegram", OK, f"@{username}")
+
+
+CHECKS: tuple[Callable[[], Result], ...] = (
+    check_uv,
+    check_python,
+    check_marimo,
+    check_data,
+    check_gemini,
+    check_langfuse,
+    check_fastembed,
+    check_telegram,
+    check_cloudflared,
+)
+
+# Session 1 cannot start without these. The rest can be fixed later.
+ESSENTIAL = {"uv", "python", "marimo", "data", "gemini", "langfuse", "fastembed"}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--quiet", action="store_true", help="print only the READY line")
+    args = parser.parse_args()
+
+    if args.quiet:
+        os.environ.setdefault("STARGATE_QUIET", "1")
+
+    results: list[Result] = []
+    for check in CHECKS:
+        label, value, detail = check()
+        results.append((label, value, detail))
+        if not args.quiet:
+            mark = " " if value not in {"MISSING", "FAILED"} and "TOO-OLD" not in value else "!"
+            print(f"{mark} {label:<12} {value}")
+            if detail:
+                print(f"    {detail}")
+
+    broken = [label for label, value, _ in results if value in {"MISSING", "FAILED"}]
+    blocking = [label for label in broken if label in ESSENTIAL]
+
+    summary = "  ".join(f"{label}={value}" for label, value, _ in results)
+    print()
+    print(f"READY  {summary}")
+
+    if blocking:
+        print()
+        print(f"Not ready yet: {', '.join(blocking)}. See TROUBLESHOOTING.md.")
+        return 1
+    if broken:
+        print()
+        print(f"Fine for session 1; fix before session 2: {', '.join(broken)}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

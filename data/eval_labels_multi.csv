@@ -1,0 +1,21 @@
+trace_ref,annotator,grounded,note
+example-00,author,false,counting question answered from retrieved prose; never touched the sightings table
+example-01,author,false,"routing failure again, and the corpus has nothing on this"
+example-02,author,false,source/claim conflation: a study's claim restated as established fact
+example-03,author,true,grounded and attributed - a passing example
+example-04,author,false,"out-of-corpus hallucination: answered from training data, not the documents"
+example-05,author,true,correct refusal - a passing example
+example-06,author,false,retrieved the right document but gave no citation
+example-07,author,false,"language drift: asked in Italian, answered in English"
+example-08,author,false,"language fine, routing wrong, and the number is invented"
+example-09,author,true,"attributed to a session, grounded - a passing example"
+example-10,author,false,"the same document, now with the training-session content asserted as history"
+example-11,author,false,"retrieval miss: plausible answer, wrong source document"
+example-12,author,false,no citation
+example-13,author,true,cited and attributed - a passing example
+example-14,author,false,borderline: reports findings without attributing the conclusion
+example-15,author,false,an aggregate question answered without SQL; the real answer is 'light'
+example-16,author,false,"invented a coordinate without calling the tool, then described an imaginary site"
+example-17,author,false,"roughly right, unattributed, and the retrieved document does not support it"
+example-18,author,false,"no citation, otherwise sound"
+example-19,author,false,a 1975 threat assessment's claims restated as fact
