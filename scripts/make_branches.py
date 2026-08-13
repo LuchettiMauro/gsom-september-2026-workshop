@@ -196,8 +196,8 @@ def git(*args: str, index: str | None = None, check: bool = True) -> str:
     return result.stdout.strip()
 
 
-def paths_in_source() -> list[str]:
-    return git("ls-tree", "-r", "--name-only", SOURCE_BRANCH).splitlines()
+def paths_in_source(source: str = SOURCE_BRANCH) -> list[str]:
+    return git("ls-tree", "-r", "--name-only", source).splitlines()
 
 
 def selected(patterns: list[str], every_path: list[str]) -> set[str]:
@@ -211,11 +211,13 @@ def selected(patterns: list[str], every_path: list[str]) -> set[str]:
     return keep
 
 
-def build_branch(name: str, message: str, keep: set[str], every_path: list[str]) -> str:
+def build_branch(
+    name: str, message: str, keep: set[str], every_path: list[str], source: str = SOURCE_BRANCH
+) -> str:
     """Create a commit holding only `keep`, and point `name` at it."""
     with tempfile.TemporaryDirectory() as workdir:
         index = str(Path(workdir) / "index")
-        git("read-tree", SOURCE_BRANCH, index=index)
+        git("read-tree", source, index=index)
         drop = [p for p in every_path if p not in keep]
         # Batched: a repo with hundreds of files would otherwise blow the
         # command-line length limit on Windows.
@@ -231,14 +233,21 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--push", action="store_true", help="force-push the branches")
     parser.add_argument("--remote", default="origin")
+    parser.add_argument(
+        "--from",
+        dest="source",
+        default=SOURCE_BRANCH,
+        help="branch to snapshot (default: main)",
+    )
     args = parser.parse_args()
 
-    if git("rev-parse", "--verify", "--quiet", SOURCE_BRANCH, check=False) == "":
-        print(f"No `{SOURCE_BRANCH}` branch in this repository.")
+    source = args.source
+    if git("rev-parse", "--verify", "--quiet", source, check=False) == "":
+        print(f"No `{source}` branch in this repository.")
         return 1
 
-    every_path = paths_in_source()
-    print(f"{SOURCE_BRANCH} holds {len(every_path)} files\n")
+    every_path = paths_in_source(source)
+    print(f"{source} holds {len(every_path)} files\n")
 
     missing: list[str] = []
     for name, description, modules in STEPS:
@@ -247,7 +256,7 @@ def main() -> int:
             if not pattern.endswith("/") and pattern not in every_path:
                 missing.append(f"{name}: {pattern}")
         keep = selected(patterns, every_path)
-        build_branch(name, f"{name}: {description}", keep, every_path)
+        build_branch(name, f"{name}: {description}", keep, every_path, source)
         print(f"  {name:<9} {len(keep):>3} files   {description}")
 
     if missing:
