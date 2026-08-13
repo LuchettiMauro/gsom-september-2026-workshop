@@ -2,6 +2,7 @@
 
     uv run python scripts/make_branches.py            # rebuild locally
     uv run python scripts/make_branches.py --push     # and force-push
+    uv run python scripts/make_branches.py --from wip # snapshot another branch
 
 `main` is the only source of truth. Every `step-NN` branch is a snapshot of it
 holding the package modules that exist by the end of that notebook — so a
@@ -242,6 +243,12 @@ def main() -> int:
     args = parser.parse_args()
 
     source = args.source
+    if source in {name for name, _, _ in STEPS}:
+        print(
+            f"Refusing to snapshot `{source}`: it is one of the generated branches, "
+            "and the loop would rewrite it while still reading from it."
+        )
+        return 1
     if git("rev-parse", "--verify", "--quiet", source, check=False) == "":
         print(f"No `{source}` branch in this repository.")
         return 1
@@ -260,7 +267,7 @@ def main() -> int:
         print(f"  {name:<9} {len(keep):>3} files   {description}")
 
     if missing:
-        print("\nListed in the manifest but not on main:")
+        print(f"\nListed in the manifest but not on {source}:")
         for item in sorted(set(missing)):
             print(f"  {item}")
 
