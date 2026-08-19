@@ -11,6 +11,9 @@ dependencies = [
     "marimo>=0.11",
     # agent framework
     "agno>=2.0",
+    # session storage: agno's SqliteDb is built on SQLAlchemy, which agno itself
+    # only declares under its `os` extra
+    "sqlalchemy>=2.0",
     # models
     "google-genai>=1.0",
     # retrieval

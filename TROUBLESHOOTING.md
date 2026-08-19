@@ -77,6 +77,20 @@ sitting there.
 
 ---
 
+### `No module named 'sqlalchemy'` (or another package the notebook clearly needs)
+
+Your environment was installed before that dependency was added to
+`pyproject.toml`. Pull and re-sync:
+
+```
+git pull
+uv sync
+```
+
+Then restart the notebook — a running kernel keeps the old environment.
+
+---
+
 ### `uv: command not found` after installing it
 
 The installer adds `uv` to your PATH, but only for *new* terminals. Close the
