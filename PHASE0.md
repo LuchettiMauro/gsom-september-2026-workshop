@@ -40,6 +40,10 @@ means one less thing to go wrong later.
 **macOS**: `brew install cloudflared`
 **Linux**: see https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/
 
+Then close and reopen your terminal, as in step 1: the installer adds
+`cloudflared` to `PATH`, and a terminal that was already open keeps the old one.
+Check with `cloudflared --version`.
+
 ## 3. Get the code
 
 ```bash

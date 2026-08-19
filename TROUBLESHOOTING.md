@@ -28,10 +28,29 @@ Three possibilities, in order of likelihood:
 
 ---
 
+### "This model models/… is no longer available to new users"
+
+Google retires Gemini models on its own schedule. A retired model keeps working
+for projects that already used it, so an old key succeeds while a freshly created
+one gets this error on the same model name.
+
+Fix it by naming a current model in `.env`:
+
+```
+STARGATE_MODEL=gemini-3.1-flash-lite
+```
+
+`uv run python scripts/check.py` prints the models your key can actually see when
+the configured one is rejected, so you can pick from that list. Prefer a
+`flash-lite` model: the workshop's agent loops need the higher requests-per-minute
+allowance.
+
+---
+
 ### `429` / `RESOURCE_EXHAUSTED` / "rate limited"
 
-You've hit the free-tier limit: about **15 requests per minute** and **1000 per
-day** on `gemini-2.5-flash-lite`.
+You've hit the free-tier limit: about **15 requests per minute** on
+`gemini-3.1-flash-lite`, plus a daily cap.
 
 A single agent question costs several model calls, so this arrives sooner than
 you'd expect — which is itself worth noticing. The code retries automatically

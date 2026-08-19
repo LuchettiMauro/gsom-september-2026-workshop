@@ -19,9 +19,16 @@ PARQUET = DATA_DIR / "nuforc.parquet"
 LANCEDB_DIR = REPO_ROOT / "lancedb"
 SESSION_DB = REPO_ROOT / "stargate.db"
 
-# The workshop default. `gemini-2.5-flash` allows only 10 requests/minute on the
-# free tier, and a single agent question can cost six or more calls.
-DEFAULT_MODEL = "gemini-2.5-flash-lite"
+# The workshop default. The lite models get the highest free-tier allowance,
+# 15 requests/minute against 10 for the full flash models, and a single agent
+# question can cost six or more calls.
+#
+# Google retires Gemini models faster than this repo is updated: once a model is
+# deprecated it keeps working for existing projects but new API keys get
+# "no longer available to new users". If that happens, set STARGATE_MODEL in
+# `.env` to a current model — `uv run python scripts/check.py` prints the ones
+# your key can actually see.
+DEFAULT_MODEL = "gemini-3.1-flash-lite"
 
 # FastEmbed's small English model: ~80 MB, CPU-only, no API and therefore no
 # rate limit. Pre-downloaded during phase 0.

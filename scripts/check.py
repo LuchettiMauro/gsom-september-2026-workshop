@@ -67,9 +67,29 @@ def check_marimo() -> Result:
     return ("marimo", OK if found else "MISSING", "" if found else "Run `uv sync`.")
 
 
+# Where the platform installers put the binary. A terminal opened before the
+# install does not see the PATH entry the installer added, so an attendee who
+# just ran `winget install` gets MISSING from an otherwise fine machine.
+CLOUDFLARED_FALLBACKS = (
+    Path("C:/Program Files (x86)/cloudflared/cloudflared.exe"),
+    Path("C:/Program Files/cloudflared/cloudflared.exe"),
+    Path("/opt/homebrew/bin/cloudflared"),
+    Path("/usr/local/bin/cloudflared"),
+    Path("/usr/bin/cloudflared"),
+)
+
+
 def check_cloudflared() -> Result:
     version = _version_of("cloudflared", "--version")
     if version is None:
+        installed = next((p for p in CLOUDFLARED_FALLBACKS if p.exists()), None)
+        if installed is not None:
+            return (
+                "cloudflared",
+                OK,
+                f"installed at {installed}, but not on this terminal's PATH — "
+                "close and reopen the terminal before session 2.",
+            )
         return (
             "cloudflared",
             "MISSING",
@@ -83,6 +103,23 @@ def check_data() -> Result:
     if docs == 0 or not PARQUET.exists():
         return ("data", "MISSING", "Run `uv run python scripts/fetch_data.py`.")
     return ("data", OK, f"{docs} documents, sightings parquet present")
+
+
+def _suggest_models(client, limit: int = 6) -> str:
+    """Model names this key can actually use, for when the configured one is gone."""
+    try:
+        names = [
+            m.name.removeprefix("models/")
+            for m in client.models.list()
+            if "generateContent" in (getattr(m, "supported_actions", None) or [])
+        ]
+    except Exception:
+        return ""
+    flash = [n for n in names if "flash" in n and "preview" not in n]
+    pick = flash[:limit] or names[:limit]
+    if not pick:
+        return ""
+    return " Models your key can see: " + ", ".join(pick) + "."
 
 
 def check_gemini() -> Result:
@@ -100,7 +137,15 @@ def check_gemini() -> Result:
         if not getattr(response, "text", None):
             return ("gemini", "FAILED", "The API returned an empty response.")
     except Exception as exc:
-        return ("gemini", "FAILED", f"{type(exc).__name__}: {str(exc)[:160]}")
+        detail = f"{type(exc).__name__}: {str(exc)[:160]}"
+        text = str(exc).lower()
+        if "no longer available" in text or "not found" in text or "404" in text:
+            detail = (
+                f"{cfg.model} is not available to this key — Google has retired it for "
+                f"new projects. Set STARGATE_MODEL in .env to a current model."
+                + _suggest_models(client)
+            )
+        return ("gemini", "FAILED", detail)
     return ("gemini", OK, f"model {cfg.model}")
 
 
