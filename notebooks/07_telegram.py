@@ -10,8 +10,8 @@ def _(mo):
     # 07 · The agent, on your phone
 
     **Start here.** This notebook needs `telegram_bot.py`, which arrives on
-    `step-07`. Run this in a terminal, in the repository root — not in a cell
-    of this notebook, and not in the terminal marimo is running in:
+    `step-07`. Run this in a terminal, in the repository root — not in a
+    cell of this notebook, and not in the terminal marimo is running in:
 
     ```
     git add -A && git commit -m "my work so far"

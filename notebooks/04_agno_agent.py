@@ -11,8 +11,8 @@ def _(mo):
 
     **Start here.** This notebook needs `stargate/agents.py` and
     `stargate/observability.py`, which arrive on `step-04`. Run this in a
-    terminal, in the repository root — not in a cell
-    of this notebook, and not in the terminal marimo is running in:
+    terminal, in the repository root — not in a cell of this notebook, and
+    not in the terminal marimo is running in:
 
     ```
     git add -A && git commit -m "my work so far"

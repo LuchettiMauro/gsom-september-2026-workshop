@@ -10,9 +10,9 @@ def _(mo):
     # 08 · How bad is it?
 
     **Start here.** This notebook needs the `stargate/evaluators/` package,
-    which arrives on `step-08`. Run this in a terminal, in the repository root —
-    not in a cell
-    of this notebook, and not in the terminal marimo is running in:
+    which arrives on `step-08`. Run this in a terminal, in the repository
+    root — not in a cell of this notebook, and not in the terminal marimo is
+    running in:
 
     ```
     git add -A && git commit -m "my work so far"

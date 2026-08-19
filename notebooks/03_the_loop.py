@@ -10,8 +10,8 @@ def _(mo):
     # 03 · An agent is a while loop
 
     **Start here.** This notebook needs `stargate/loop.py`, which arrives on
-    `step-03`. Run this in a terminal, in the repository root — not in a cell
-    of this notebook, and not in the terminal marimo is running in:
+    `step-03`. Run this in a terminal, in the repository root — not in a
+    cell of this notebook, and not in the terminal marimo is running in:
 
     ```
     git add -A && git commit -m "my work so far"

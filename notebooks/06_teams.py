@@ -9,9 +9,9 @@ def _(mo):
     mo.md(r"""
     # 06 · Two specialists and a router
 
-    **Start here.** This notebook needs `stargate/teams.py`, which arrives on
-    `step-06`. Run this in a terminal, in the repository root — not in a cell
-    of this notebook, and not in the terminal marimo is running in:
+    **Start here.** This notebook needs `stargate/teams.py`, which arrives
+    on `step-06`. Run this in a terminal, in the repository root — not in a
+    cell of this notebook, and not in the terminal marimo is running in:
 
     ```
     git add -A && git commit -m "my work so far"

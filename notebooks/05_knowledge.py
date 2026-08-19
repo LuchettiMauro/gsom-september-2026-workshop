@@ -10,9 +10,9 @@ def _(mo):
     # 05 · Giving it something to read
 
     **Start here.** This notebook needs `stargate/chunking.py` and
-    `stargate/knowledge.py`, which arrive on `step-05`. Run this in a terminal,
-    in the repository root — not in a cell
-    of this notebook, and not in the terminal marimo is running in:
+    `stargate/knowledge.py`, which arrive on `step-05`. Run this in a
+    terminal, in the repository root — not in a cell of this notebook, and
+    not in the terminal marimo is running in:
 
     ```
     git add -A && git commit -m "my work so far"

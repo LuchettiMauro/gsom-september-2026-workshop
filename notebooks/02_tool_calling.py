@@ -10,9 +10,9 @@ def _(mo):
     # 02 · The model does not call anything
 
     **Start here.** This notebook needs `stargate/tools.py` and
-    `stargate/sightings.py`, which arrive on `step-02`. Run this in a terminal,
-    in the repository root — not in a cell
-    of this notebook, and not in the terminal marimo is running in:
+    `stargate/sightings.py`, which arrive on `step-02`. Run this in a
+    terminal, in the repository root — not in a cell of this notebook, and
+    not in the terminal marimo is running in:
 
     ```
     git add -A && git commit -m "my work so far"
