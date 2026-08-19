@@ -9,7 +9,8 @@ def _(mo):
     mo.md(r"""
     # 04 · The same thing, in six lines
 
-    **Behind? Start here.**
+    **Behind? Start here.** In a terminal, in the repository root — not in a
+    cell of this notebook, and not in the terminal marimo is running in:
 
     ```
     git add -A && git commit -m "my work so far"
@@ -218,6 +219,15 @@ def _(mo):
     ```
 
     Next: `notebooks/05_knowledge.py` — giving it documents to read.
+
+    To get there: go back to marimo's home page in your browser, shut
+    **this** notebook down (**Running notebooks** → the round Shutdown
+    button on its row), then click the next one in the list.
+
+    Launched marimo on this single file instead? `Ctrl+C` in its terminal,
+    then `uv run marimo edit notebooks/05_knowledge.py`.
+
+    See *Running the notebooks* in the README if this is the first time.
     """)
     return
 

@@ -31,6 +31,10 @@ before the session, so anything broken can be fixed by email rather than in clas
 
 ## Quick start
 
+All of these go into a **terminal** — your OS terminal, or the one built into
+your editor; [PHASE0 step 0](PHASE0.md) covers which one and how to open it. Run
+them from the repository root, the folder containing `pyproject.toml`.
+
 ```bash
 git clone https://github.com/<org>/polimi-workshop.git
 cd polimi-workshop
@@ -42,15 +46,68 @@ uv run python scripts/fetch_data.py
 uv run python scripts/check.py
 ```
 
-Open the first notebook:
-
-```bash
-uv run marimo edit notebooks/01_chat_completions.py
-```
-
 > **Always work on your own branch.** The `step-*` branches are regenerated and
 > force-pushed between sessions. If you commit directly onto one, your work will
 > be overwritten without warning.
+
+---
+
+## Running the notebooks
+
+The notebooks are [marimo](https://marimo.io) notebooks. They are ordinary
+Python files, and marimo serves them to your browser.
+
+**Start the notebook server once, and leave it running for the whole session:**
+
+```bash
+uv run marimo edit
+```
+
+It prints a URL and opens your browser at marimo's home page, which lists every
+notebook in the repository. Click `notebooks/01_chat_completions.py` to open it.
+
+That terminal is now **busy** — it belongs to marimo until you stop it. Do not
+type further commands into it. Open a second terminal window or tab for
+anything else (`git`, `uv run pytest`, and in session 2 the tunnel).
+
+### Moving from one notebook to the next
+
+Each notebook ends with a **Checkpoint** naming the next one. To get there:
+
+1. Go back to the marimo **home page** tab in your browser (the one at the
+   server URL, listing the notebooks). If you closed it, open the URL the
+   terminal printed.
+2. Find the notebook you just finished under **Running notebooks** at the top,
+   and click the small round **Shutdown** button on its row (hover to see the
+   tooltip). Confirm. This kills that one notebook's Python kernel and frees the
+   memory, the model client and the database handles it was holding.
+   Do not confuse it with the **Shutdown** button in the page header — that one
+   stops the *server* and every notebook with it.
+3. Click the next notebook in the list to open it.
+
+**Shut the previous one down before opening the next.** Every open notebook
+keeps a live kernel; leaving five of them running is how you end up with five
+copies of the embedding model in RAM, and, worse, with a stale cell somewhere
+quietly re-running API calls against your rate limit.
+
+You can also skip the home page and open one notebook directly:
+
+```bash
+uv run marimo edit notebooks/02_tool_calling.py
+```
+
+Then the way to close it is `Ctrl+C` in that terminal, which stops the server
+entirely — and you start the next one with another `uv run marimo edit`. Both
+workflows are fine; the home page is less typing.
+
+### Two things about marimo that surprise people
+
+- **It is reactive.** Editing a cell marks everything downstream stale. The repo
+  ships in *lazy* mode, so stale cells wait for you to click them rather than
+  re-running by themselves — which matters here, because re-running costs API
+  calls.
+- **Each variable is defined in exactly one cell.** Prefix a name with `_` to
+  keep it local to its cell. See [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
 
 ---
 

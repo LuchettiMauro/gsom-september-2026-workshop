@@ -250,6 +250,10 @@ def main() -> int:
     if broken:
         print()
         print(f"Fine for session 1; fix before session 2: {', '.join(broken)}")
+    print()
+    print("Session 1 starts here — run this in a terminal, from the repo root:")
+    print("    uv run marimo edit")
+    print("then open notebooks/01_chat_completions.py from the page that appears.")
     return 0
 
 

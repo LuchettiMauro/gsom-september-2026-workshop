@@ -4,6 +4,55 @@ The failures that actually happen, roughly in the order they happen.
 
 ---
 
+### "Which terminal am I supposed to type this in?"
+
+Any of them — your OS terminal or your editor's built-in one — as long as the
+working directory is the repository root, the folder holding `pyproject.toml`.
+[PHASE0 step 0](PHASE0.md) walks through opening one on each platform.
+
+Two rules that account for most of the confusion:
+
+- Commands starting with `uv`, `git`, `cd` or `curl` go to a **shell**. Typing
+  them into a notebook cell gives you `SyntaxError: invalid syntax`.
+- The terminal running `uv run marimo edit` is **occupied** for as long as
+  marimo runs. Anything else needs a second terminal window or tab.
+
+---
+
+### The terminal ignores what I type / it just prints marimo log lines
+
+That is the terminal marimo is running in, and it stays that way until marimo
+stops. Open a second one and work there.
+
+If you actually want to stop marimo: `Ctrl+C` in that terminal. That shuts down
+the *server* and every notebook it was serving.
+
+---
+
+### I finished a notebook. How do I close it and open the next one?
+
+On marimo's home page (the browser tab at the server URL): find the notebook
+under **Running notebooks**, click the round **Shutdown** button on its row,
+confirm, then click the next notebook in the list.
+
+If you started marimo on a single file (`uv run marimo edit notebooks/05_...`),
+there is no home page — press `Ctrl+C` in that terminal and start the next one.
+
+Closing the browser tab does **not** close the notebook. The kernel keeps
+running, holding its memory and its clients, until you shut it down or stop the
+server. Leaving several running is a common cause of the machine getting slow
+halfway through a session.
+
+---
+
+### I switched branches and the notebook still shows the old code
+
+The file on disk changed underneath a running kernel. Shut that notebook down
+from marimo's home page and open it again. Do the `git switch` *before*
+opening the notebook, not while it is running.
+
+---
+
 ### `uv: command not found` after installing it
 
 The installer adds `uv` to your PATH, but only for *new* terminals. Close the

@@ -11,6 +11,56 @@ Everything here is free. No credit card is required at any point.
 
 ---
 
+## 0. Open a terminal
+
+Every command in this workshop is typed into a terminal. Which one does not
+matter much, but you have to know where it is, so pick one now and use the same
+one throughout.
+
+**Windows** — use **PowerShell**, not the old `cmd` prompt. Press `Win`, type
+`powershell`, press Enter. If you have Windows Terminal installed, that opens
+PowerShell by default and is nicer. Some commands below differ between
+PowerShell and `cmd`; where they do, this guide says which is which.
+
+**macOS** — press `Cmd+Space`, type `terminal`, press Enter. iTerm2 works
+identically if you already have it.
+
+**Linux** — whatever your distribution gave you: `Ctrl+Alt+T` opens it on most.
+
+**Or your editor's built-in terminal.** VS Code, PyCharm and Cursor all have
+one, and it is the more comfortable option because the terminal and the files
+are in the same window:
+
+- **VS Code / Cursor**: `File → Open Folder` on the cloned repo, then
+  `` Ctrl+` `` (`` Cmd+` `` on macOS), or `View → Terminal`.
+- **PyCharm**: `Alt+F12`, or `View → Tool Windows → Terminal`.
+
+The built-in terminal is the *same* shell as the OS one — on Windows check the
+dropdown in the terminal panel says `powershell` and not `Command Prompt`.
+
+Three things that matter regardless of which you picked:
+
+1. **Your working directory must be the repository root.** That is the folder
+   containing `pyproject.toml`. Every command in this guide assumes it. After
+   step 3 you get there with `cd polimi-workshop`; check with `pwd` (macOS,
+   Linux, PowerShell) or `cd` with no arguments (Windows `cmd`).
+2. **"Close and reopen your terminal" means the whole window**, not just a new
+   tab in the same one. Installers change `PATH`, and only a freshly started
+   shell reads it. In VS Code that means closing the terminal panel with the
+   bin icon and opening a new one — or, if that still fails, restarting the
+   editor.
+3. **You will need a second terminal in session 2**, running alongside the
+   first — one for the tunnel, one for the bot. Open a second window, or a
+   second tab (`Ctrl+Shift+5` in VS Code splits the panel). Both need to be in
+   the repository root.
+
+> **Do not use a Python REPL or a Jupyter cell for these.** Commands starting
+> with `uv`, `git`, `cd` or `curl` go to the shell. If you see
+> `SyntaxError: invalid syntax` on a line starting with `uv`, you typed a shell
+> command into Python.
+
+---
+
 ## 1. Install `uv`
 
 `uv` manages both Python and the project's dependencies, so you do **not** need
@@ -134,6 +184,24 @@ least **three days before session 1**.
 If anything says `MISSING` or `FAILED`, check
 [TROUBLESHOOTING.md](TROUBLESHOOTING.md) first — and if it's still broken, send
 the output. That's what the three days are for.
+
+---
+
+## 11. Optional: open the first notebook once
+
+Not required, but it removes the last surprise from the start of session 1.
+
+```bash
+uv run marimo edit
+```
+
+Your browser opens on marimo's home page, listing every notebook in the
+repository. Click `notebooks/01_chat_completions.py`. You do not need to run
+anything — just confirm it opens.
+
+To stop: `Ctrl+C` in that terminal. The full workflow, including how to close
+one notebook and open the next, is in *Running the notebooks* in
+[README.md](README.md#running-the-notebooks).
 
 ---
 

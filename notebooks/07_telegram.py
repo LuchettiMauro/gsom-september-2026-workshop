@@ -9,7 +9,8 @@ def _(mo):
     mo.md(r"""
     # 07 · The agent, on your phone
 
-    **Behind? Start here.**
+    **Behind? Start here.** In a terminal, in the repository root — not in a
+    cell of this notebook, and not in the terminal marimo is running in:
 
     ```
     git add -A && git commit -m "my work so far"
@@ -195,6 +196,15 @@ def _(mo):
     Reference state: **`step-07`**
 
     Next: `notebooks/08_evals.py` — the part that matters.
+
+    To get there: go back to marimo's home page in your browser, shut
+    **this** notebook down (**Running notebooks** → the round Shutdown
+    button on its row), then click the next one in the list.
+
+    Launched marimo on this single file instead? `Ctrl+C` in its terminal,
+    then `uv run marimo edit notebooks/08_evals.py`.
+
+    See *Running the notebooks* in the README if this is the first time.
     """)
     return
 
