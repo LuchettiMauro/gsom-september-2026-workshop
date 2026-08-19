@@ -53,6 +53,30 @@ opening the notebook, not while it is running.
 
 ---
 
+### `cannot import name 'tools' from 'stargate'` (or `agents`, `knowledge`, `teams`, `loop`…)
+
+The module is not on your branch yet. Each notebook reads code that arrives with
+its own `step-NN` branch, and the **Start here** block at the top of the notebook
+is what puts it there. Run it:
+
+```
+git add -A && git commit -m "my work so far"
+git fetch origin
+git switch -c mywork-02 origin/step-02
+```
+
+(with the branch that notebook names — `02_tool_calling` wants `step-02`,
+`05_knowledge` wants `step-05`, and so on).
+
+Then **shut the notebook down and open it again**. A running kernel has already
+decided that `stargate.tools` does not exist and will keep saying so, however
+many times you re-run the cell.
+
+Confirm with `git branch --show-current` and `ls stargate` — the module should be
+sitting there.
+
+---
+
 ### `uv: command not found` after installing it
 
 The installer adds `uv` to your PATH, but only for *new* terminals. Close the

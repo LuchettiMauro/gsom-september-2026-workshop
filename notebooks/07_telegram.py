@@ -9,14 +9,18 @@ def _(mo):
     mo.md(r"""
     # 07 · The agent, on your phone
 
-    **Behind? Start here.** In a terminal, in the repository root — not in a
-    cell of this notebook, and not in the terminal marimo is running in:
+    **Start here.** This notebook needs `telegram_bot.py`, which arrives on
+    `step-07`. Run this in a terminal, in the repository root — not in a cell
+    of this notebook, and not in the terminal marimo is running in:
 
     ```
     git add -A && git commit -m "my work so far"
     git fetch origin
-    git switch -c mywork-06 origin/step-06
+    git switch -c mywork-07 origin/step-07
     ```
+
+    Then shut this notebook down from marimo's home page and open it again, so
+    the kernel picks up the files that just appeared.
 
     ---
 

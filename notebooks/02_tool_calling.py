@@ -9,14 +9,19 @@ def _(mo):
     mo.md(r"""
     # 02 · The model does not call anything
 
-    **Behind? Start here.** In a terminal, in the repository root — not in a
-    cell of this notebook, and not in the terminal marimo is running in:
+    **Start here.** This notebook needs `stargate/tools.py` and
+    `stargate/sightings.py`, which arrive on `step-02`. Run this in a terminal,
+    in the repository root — not in a cell
+    of this notebook, and not in the terminal marimo is running in:
 
     ```
     git add -A && git commit -m "my work so far"
     git fetch origin
-    git switch -c mywork-01 origin/step-01
+    git switch -c mywork-02 origin/step-02
     ```
+
+    Then shut this notebook down from marimo's home page and open it again, so
+    the kernel picks up the files that just appeared.
 
     ---
 

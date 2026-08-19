@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -212,6 +213,49 @@ def selected(patterns: list[str], every_path: list[str]) -> set[str]:
     return keep
 
 
+# Notebook NN reads the modules that `step-NN` delivers, so its "Start here"
+# block must name `step-NN` and not `step-(NN-1)`. Getting that wrong ships a
+# branch where the notebook's first cell raises ImportError, which is exactly
+# the sort of thing nobody notices until twenty students hit it at once.
+NOTEBOOK_START = re.compile(r"origin/(step-\d+)")
+STARGATE_IMPORT = re.compile(r"from stargate\.([a-z_]+)")
+STARGATE_FROM = re.compile(r"from stargate import ([a-z_, ]+)")
+REPO_FILE = re.compile(r"\b((?:stargate|scripts|tests)/[\w./]+\.py|telegram_bot\.py)\b")
+
+
+def needed_paths(text: str, every_path: list[str]) -> set[str]:
+    """Repository files a notebook imports or names, restricted to ones that exist."""
+    modules = set(STARGATE_IMPORT.findall(text))
+    for group in STARGATE_FROM.findall(text):
+        modules.update(part.strip() for part in group.split(",") if part.strip())
+
+    wanted = set(REPO_FILE.findall(text))
+    for module in modules:
+        wanted.add(f"stargate/{module}.py")
+        wanted.update(p for p in every_path if p.startswith(f"stargate/{module}/"))
+    return {p for p in wanted if p in every_path}
+
+
+def check_notebook_start_branches(every_path: list[str], source: str) -> list[str]:
+    """Every notebook must be runnable on the branch its own header sends you to."""
+    manifests = {name: COMMON + modules for name, _, modules in STEPS}
+    problems: list[str] = []
+
+    for path in sorted(p for p in every_path if p.startswith("notebooks/")):
+        text = git("show", f"{source}:{path}")
+        match = NOTEBOOK_START.search(text)
+        if not match:
+            continue
+        branch = match.group(1)
+        if branch not in manifests:
+            problems.append(f"{path}: names `{branch}`, which is not a generated branch")
+            continue
+        available = selected(manifests[branch], every_path)
+        for missing in sorted(needed_paths(text, every_path) - available):
+            problems.append(f"{path}: needs {missing}, absent from `{branch}`")
+    return problems
+
+
 def build_branch(
     name: str, message: str, keep: set[str], every_path: list[str], source: str = SOURCE_BRANCH
 ) -> str:
@@ -243,6 +287,11 @@ def main() -> int:
         default=SOURCE_BRANCH,
         help="branch to snapshot (default: main)",
     )
+    parser.add_argument(
+        "--ignore-notebook-check",
+        action="store_true",
+        help="build even if a notebook names a branch that cannot run it",
+    )
     args = parser.parse_args()
 
     source = args.source
@@ -258,6 +307,14 @@ def main() -> int:
 
     every_path = paths_in_source(source)
     print(f"{source} holds {len(every_path)} files\n")
+
+    broken = check_notebook_start_branches(every_path, source)
+    if broken and not args.ignore_notebook_check:
+        print("A notebook sends students to a branch that cannot run it:")
+        for problem in broken:
+            print(f"  {problem}")
+        print("\nFix the `Start here` block, or pass --ignore-notebook-check.")
+        return 1
 
     missing: list[str] = []
     for name, description, modules in STEPS:

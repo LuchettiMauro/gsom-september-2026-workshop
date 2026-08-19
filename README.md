@@ -125,10 +125,13 @@ workflows are fine; the home page is less typing.
 | | `08_evals` | What's actually wrong with it, and how you'd measure that |
 | **Take-home** | `09_workflows` | Deterministic orchestration, when you don't want an agent deciding |
 
-Each notebook opens with the git command that takes you to the state it assumes,
-and closes with the branch that holds the reference solution. If you get stuck or
-fall behind, that's the escape hatch — you're never blocked for more than the ten
-seconds it takes to switch branches.
+Each notebook opens with a **Start here** block: one `git switch` onto the
+`step-NN` branch that carries the modules that notebook reads. That switch is
+how the code reaches your machine, so run it even when you are not behind — a
+notebook opened on the previous step will fail on its first import.
+
+If you fall behind or break something, the same command is the escape hatch:
+commit what you have, switch, and you are back in sync in ten seconds.
 
 ---
 
