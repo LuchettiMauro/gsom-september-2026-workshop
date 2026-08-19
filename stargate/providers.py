@@ -68,16 +68,25 @@ class GeminiClient:
         self.system = system
         self._client = genai.Client(api_key=settings().require_google())
         self.call_count = 0
+        # Gemini 3 attaches an opaque `thought_signature` to the parts of a turn
+        # that asks for tools, and rejects the next request if it does not come
+        # back byte-for-byte. Our own message dicts cannot carry bytes like that,
+        # so keep each model turn exactly as it arrived and replay it — the same
+        # move notebook 02 makes by hand when it appends
+        # `response.candidates[0].content` instead of rebuilding it.
+        self._model_turns: dict[tuple[str, ...], Any] = {}
 
     # -- conversion between our loop's message format and Gemini's ----------
 
-    @staticmethod
-    def _to_contents(messages: list[Message]) -> list[Any]:
+    def _to_contents(self, messages: list[Message]) -> list[Any]:
         """Our messages -> Gemini `contents`.
 
         Gemini has no "tool" role: a tool result is a *user* turn carrying a
         `function_response` part. That mismatch is exactly the kind of thing
         notebook 01 is about.
+
+        An assistant turn that asked for tools is replayed from the response
+        object itself when we still have it, so its `thought_signature` survives.
         """
         from google.genai import types
 
@@ -89,6 +98,10 @@ class GeminiClient:
                     types.Content(role="user", parts=[types.Part(text=str(msg["content"]))])
                 )
             elif role == "assistant":
+                replay = self._model_turns.get(_turn_key(msg))
+                if replay is not None:
+                    contents.append(replay)
+                    continue
                 parts: list[Any] = []
                 if msg.get("content"):
                     parts.append(types.Part(text=str(msg["content"])))
@@ -145,11 +158,11 @@ class GeminiClient:
             contents=self._to_contents(messages),
             config=config,
         )
+        reply = self._to_reply(response)
         self.call_count += 1
-        return self._to_reply(response)
+        return reply
 
-    @staticmethod
-    def _to_reply(response: Any) -> ModelReply:
+    def _to_reply(self, response: Any) -> ModelReply:
         text_parts: list[str] = []
         calls: list[ToolCall] = []
         candidates = getattr(response, "candidates", None) or []
@@ -160,11 +173,22 @@ class GeminiClient:
                     text_parts.append(part.text)
                 fc = getattr(part, "function_call", None)
                 if fc is not None:
+                    # Gemini leaves `id` unset, so number the calls ourselves.
+                    # The counter is per client, not per turn: a step-2 call must
+                    # not reuse a step-1 id or the replay below picks the wrong
+                    # turn — and the loop's transcript would conflate them too.
                     calls.append(
                         ToolCall(
-                            id=fc.id or f"call_{len(calls)}",
+                            id=fc.id or f"call_{self.call_count}_{len(calls)}",
                             name=fc.name or "",
                             arguments=dict(fc.args or {}),
                         )
                     )
+            if calls and content is not None:
+                self._model_turns[tuple(c.id for c in calls)] = content
         return ModelReply(text="".join(text_parts) or None, tool_calls=calls)
+
+
+def _turn_key(msg: Message) -> tuple[str, ...]:
+    """Identify an assistant turn by the ids of the tool calls it asked for."""
+    return tuple(str(c.get("id")) for c in msg.get("tool_calls") or ())
