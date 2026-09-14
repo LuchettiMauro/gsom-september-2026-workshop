@@ -15,8 +15,8 @@ Everything here is free. No credit card is required at any point.
 ## Choose how you will work
 
 Two ways in. They differ only in how the toolchain gets onto a machine —
-from *Get a Google AI Studio key* onwards the two paths are the same text,
-the same commands and the same repository.
+from [*Get a Google AI Studio key*](#1-get-a-google-ai-studio-key) onwards the
+two paths are the same text, the same commands and the same repository.
 
 ### A. GitHub Codespaces — recommended
 
@@ -70,7 +70,7 @@ sightings and the 80 MB embedding model are all baked into the image.
    Every one of these boxes works the same way for the rest of the workshop:
    copy, paste into the terminal, press Enter.
 
-Then skip to *Get a Google AI Studio key*.
+Then skip to [*Get a Google AI Studio key*](#1-get-a-google-ai-studio-key).
 
 **Four things to know about a Codespace.**
 
@@ -222,8 +222,10 @@ copy .env.example .env      # Windows cmd
 Copy-Item .env.example .env # Windows PowerShell
 ```
 
-Paste in the four values from steps 1–3. `.env` is git-ignored, so your keys
-never leave your machine — and never end up in a commit.
+Paste in the four values from steps [1](#1-get-a-google-ai-studio-key),
+[2](#2-get-a-langfuse-account) and [3](#3-get-a-telegram-bot-token). `.env` is
+git-ignored, so your keys never leave your machine — and never end up in a
+commit.
 
 The two `TELEGRAM_WEBHOOK_*` and `TELEGRAM_ALLOWED_*` lines can stay empty for
 now. Notebook 07 fills them in when it needs them.
@@ -272,8 +274,8 @@ repository. Click `notebooks/01_chat_completions.py`. You do not need to run
 anything — just confirm it opens.
 
 To stop: `Ctrl+C` in that terminal. The full workflow, including how to close
-one notebook and open the next, is in *Running the notebooks* in
-[README.md](README.md#running-the-notebooks).
+one notebook and open the next, is in
+[*Running the notebooks*](README.md#running-the-notebooks) in README.md.
 
 ---
 

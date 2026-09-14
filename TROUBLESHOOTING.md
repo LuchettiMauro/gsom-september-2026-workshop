@@ -102,7 +102,8 @@ The installer adds `uv` to your PATH, but only for *new* terminals. Close the
 terminal and open a new one.
 
 On Windows, if PowerShell refuses to run the installer at all, it's the
-execution policy — use the exact command from PHASE0.md, which includes
+execution policy — use the exact command from
+[PHASE0.md](PHASE0.md#b-your-own-machine), which includes
 `-ExecutionPolicy ByPass`.
 
 ---

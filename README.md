@@ -38,8 +38,8 @@ even if something failed, because that is what the three days are for.
 
 ## Quick start
 
-In a **Codespace**, everything below the `git switch` is already done — open a
-terminal (`` Ctrl+` ``) and start there.
+In a **Codespace**, everything below the `git switch` is already done —
+[open a terminal](PHASE0.md#a-github-codespaces--recommended) and start there.
 
 On your own machine, all of these go into a **terminal**: your OS terminal, or
 the one built into your editor. [PHASE0.md](PHASE0.md) covers which one and how
