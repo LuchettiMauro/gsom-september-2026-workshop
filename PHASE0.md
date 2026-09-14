@@ -380,12 +380,26 @@ answer is probably already sitting there.
 Not required, but it removes the last surprise from the start of session 1.
 
 ```bash
-uv run marimo edit
+uv run marimo edit --no-token
 ```
 
-Your browser opens on marimo's home page, listing every notebook in the
+**In a Codespace**, a box appears at the bottom right saying an application on
+port 2718 is available: click **Open in Browser**. If you miss it or dismiss
+it, open the **PORTS** tab — it sits next to TERMINAL, above the panel — find
+the row labelled *marimo*, and click the globe icon in its Forwarded Address
+column.
+
+**On your own machine**, the browser opens by itself. If it doesn't, the
+terminal prints a `http://localhost:2718` address; `Ctrl+click` it.
+
+Either way you land on marimo's home page, listing every notebook in the
 repository. Click `notebooks/01_chat_completions.py`. You do not need to run
 anything — just confirm it opens.
+
+`--no-token` matters. Without it marimo demands an access key that exists only
+in the URL printed in the terminal, and the tab that opens for you does not
+carry it — so you get a login box instead of your notebooks. The flag costs
+nothing here: port 2718 stays private, which is what protects it.
 
 To stop: `Ctrl+C` in that terminal. The full workflow, including how to close
 one notebook and open the next, is in

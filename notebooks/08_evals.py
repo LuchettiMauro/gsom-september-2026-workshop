@@ -478,7 +478,7 @@ def _(mo):
     button on its row), then click the next one in the list.
 
     Launched marimo on this single file instead? `Ctrl+C` in its terminal,
-    then `uv run marimo edit notebooks/09_workflows.py`.
+    then `uv run marimo edit --no-token notebooks/09_workflows.py`.
 
     See *Running the notebooks* in the README if this is the first time.
     """)

@@ -114,3 +114,10 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 # marimo notebooks are generated-ish: cells are functions with unused args by design
 "notebooks/*.py" = ["B018", "F841", "E402", "RUF001"]  # RUF001: typographic × in prose
+
+# Cells here call paid APIs, so a stale cell must never re-run on its own:
+# editing a cell marks everything downstream stale and waits. Both README.md
+# and TROUBLESHOOTING.md promise this, and without it marimo defaults to
+# autorun.
+[tool.marimo.runtime]
+on_cell_change = "lazy"

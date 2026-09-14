@@ -20,6 +20,31 @@ Two rules that account for most of the confusion:
 
 ---
 
+### marimo asks for an access key, or I can't tell what to click to open it
+
+Start it as the guide does, with the flag:
+
+```
+uv run marimo edit --no-token
+```
+
+marimo's default is to guard the server with an access key that travels in the
+URL it prints. The tab a Codespace opens for you is `localhost:2718` without
+that query string, so you meet a login box and the only copy of the key is in
+the terminal. `--no-token` removes the box. The server is still reachable only
+through your private forwarded port.
+
+If you have already started it without the flag, either stop it with `Ctrl+C`
+and start it again, or copy the whole URL from the terminal — the part after
+`?access_token=` is the key it is asking for.
+
+To open it: in a Codespace, click **Open in Browser** in the notification at
+the bottom right, or use the **PORTS** tab beside TERMINAL and click the globe
+icon on the *marimo* row. On your own machine the browser opens by itself,
+and the terminal prints a `http://localhost:2718` address you can `Ctrl+click`.
+
+---
+
 ### The terminal ignores what I type / it just prints marimo log lines
 
 That is the terminal marimo is running in, and it stays that way until marimo

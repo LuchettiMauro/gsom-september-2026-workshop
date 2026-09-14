@@ -73,11 +73,20 @@ Python files, and marimo serves them to your browser.
 **Start the notebook server once, and leave it running for the whole session:**
 
 ```bash
-uv run marimo edit
+uv run marimo edit --no-token
 ```
 
 It prints a URL and opens your browser at marimo's home page, which lists every
 notebook in the repository. Click `notebooks/01_chat_completions.py` to open it.
+
+In a Codespace, the browser is opened by the **Open in Browser** button in the
+notification at the bottom right; the **PORTS** tab, row *marimo*, globe icon,
+gets you there at any time afterwards.
+
+Keep `--no-token`. marimo otherwise protects the server with an access key that
+only appears in the printed URL, which the tab the Codespace opens for you does
+not carry — the result is a login box nobody can fill in. Port 2718 is private,
+and that is the protection that matters.
 
 That terminal is now **busy** — it belongs to marimo until you stop it. Do not
 type further commands into it. Open a second terminal window or tab for
@@ -106,12 +115,12 @@ quietly re-running API calls against your rate limit.
 You can also skip the home page and open one notebook directly:
 
 ```bash
-uv run marimo edit notebooks/02_tool_calling.py
+uv run marimo edit --no-token notebooks/02_tool_calling.py
 ```
 
 Then the way to close it is `Ctrl+C` in that terminal, which stops the server
-entirely — and you start the next one with another `uv run marimo edit`. Both
-workflows are fine; the home page is less typing.
+entirely — and you start the next one with another `uv run marimo edit
+--no-token`. Both workflows are fine; the home page is less typing.
 
 ### Two things about marimo that surprise people
 
