@@ -38,6 +38,9 @@ SOURCE_BRANCH = "main"
 # The notebooks are all here from the start — they are what students read.
 # What differs between steps is which package modules exist.
 COMMON = [
+    ".devcontainer/",
+    ".github/",
+    "docs/",
     ".gitignore",
     ".python-version",
     ".env.example",
@@ -154,10 +157,12 @@ STEPS: list[tuple[str, str, list[str]]] = [
             "stargate/knowledge.py",
             "stargate/teams.py",
             "telegram_bot.py",
+            "scripts/serve_bot.py",
             "tests/test_tools.py",
             "tests/test_sightings.py",
             "tests/test_loop.py",
             "tests/test_chunking.py",
+            "tests/test_telegram_guard.py",
         ],
     ),
     (
@@ -175,6 +180,7 @@ STEPS: list[tuple[str, str, list[str]]] = [
             "stargate/teams.py",
             "stargate/evaluators/",
             "telegram_bot.py",
+            "scripts/serve_bot.py",
             "scripts/seed_traces.py",
             "tests/",
         ],

@@ -7,7 +7,7 @@ not work is exactly the failure this exists to catch. So it makes a real
 (3-token) Gemini call and writes a real Langfuse trace rather than checking
 that the strings are non-empty.
 
-Prints one line to paste into the readiness form.
+Prints one line to paste into a Phase 0 issue on GitHub.
 """
 
 from __future__ import annotations
@@ -20,11 +20,15 @@ import subprocess
 import sys
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any
+from urllib.parse import urlencode
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 from stargate.config import DOCS_DIR, PARQUET, settings  # noqa: E402
+
+REPO = "LuchettiMauro/gsom-september-2026-workshop"
 
 Result = tuple[str, str, str]  # (label, value, detail)
 
@@ -51,7 +55,11 @@ def _version_of(command: str, *args: str) -> str | None:
 
 def check_uv() -> Result:
     version = _version_of("uv", "--version")
-    return ("uv", version or "MISSING", "" if version else "Install uv — see PHASE0.md step 1.")
+    return (
+        "uv",
+        version or "MISSING",
+        "" if version else "Install uv — see PHASE0.md, *Your own machine*.",
+    )
 
 
 def check_python() -> Result:
@@ -65,6 +73,25 @@ def check_python() -> Result:
 def check_marimo() -> Result:
     found = importlib.util.find_spec("marimo") is not None
     return ("marimo", OK if found else "MISSING", "" if found else "Run `uv sync`.")
+
+
+def check_serve() -> Result:
+    """The extra that session 2 runs on.
+
+    Agno keeps its Telegram interface behind `agno[telegram]`, and a missing
+    piece here does not show up until notebook 07 fails at import — in the
+    room, halfway through the second session.
+    """
+    missing = [
+        name for name in ("fastapi", "uvicorn", "telebot") if importlib.util.find_spec(name) is None
+    ]
+    if missing:
+        return (
+            "serve",
+            "MISSING",
+            "Needed in session 2 — run `uv sync --extra serve`. Not fatal for session 1.",
+        )
+    return ("serve", OK, "")
 
 
 # Where the platform installers put the binary. A terminal opened before the
@@ -93,7 +120,7 @@ def check_cloudflared() -> Result:
         return (
             "cloudflared",
             "MISSING",
-            "Needed in session 2 — see PHASE0.md step 2. Not fatal for session 1.",
+            "Needed in session 2 — see PHASE0.md, *Your own machine*. Not fatal for session 1.",
         )
     return ("cloudflared", OK, "")
 
@@ -105,7 +132,7 @@ def check_data() -> Result:
     return ("data", OK, f"{docs} documents, sightings parquet present")
 
 
-def _suggest_models(client, limit: int = 6) -> str:
+def _suggest_models(client: Any, limit: int = 6) -> str:
     """Model names this key can actually use, for when the configured one is gone."""
     try:
         names = [
@@ -126,7 +153,11 @@ def check_gemini() -> Result:
     """One real call. Costs about three tokens."""
     cfg = settings()
     if not cfg.google_api_key:
-        return ("gemini", "MISSING", "GOOGLE_API_KEY not set — see PHASE0.md step 4.")
+        return (
+            "gemini",
+            "MISSING",
+            "GOOGLE_API_KEY not set — see PHASE0.md, *Get a Google AI Studio key*.",
+        )
     try:
         from google import genai
 
@@ -153,7 +184,7 @@ def check_langfuse() -> Result:
     """Authenticate and write one real trace, then print its URL."""
     cfg = settings()
     if not cfg.langfuse_configured:
-        return ("langfuse", "MISSING", "Keys not set — see PHASE0.md step 5.")
+        return ("langfuse", "MISSING", "Keys not set — see PHASE0.md, *Get a Langfuse account*.")
     try:
         from stargate.observability import enable_tracing, flush
 
@@ -188,7 +219,11 @@ def check_fastembed() -> Result:
 def check_telegram() -> Result:
     cfg = settings()
     if not cfg.telegram_token:
-        return ("telegram", "MISSING", "Needed in session 2 — see PHASE0.md step 6.")
+        return (
+            "telegram",
+            "MISSING",
+            "Needed in session 2 — see PHASE0.md, *Get a Telegram bot token*.",
+        )
     try:
         import httpx
 
@@ -202,10 +237,21 @@ def check_telegram() -> Result:
     return ("telegram", OK, f"@{username}")
 
 
+def issue_url(ready_line: str) -> str:
+    """A Phase 0 issue with the READY line already in it.
+
+    The line is only `label=value` pairs — no keys, no trace URLs, no bot
+    name — so it is safe to post on a public repository.
+    """
+    query = urlencode({"template": "phase-0.yml", "ready": ready_line})
+    return f"https://github.com/{REPO}/issues/new?{query}"
+
+
 CHECKS: tuple[Callable[[], Result], ...] = (
     check_uv,
     check_python,
     check_marimo,
+    check_serve,
     check_data,
     check_gemini,
     check_langfuse,
@@ -240,8 +286,13 @@ def main() -> int:
     blocking = [label for label in broken if label in ESSENTIAL]
 
     summary = "  ".join(f"{label}={value}" for label, value, _ in results)
+    ready_line = f"READY  {summary}"
     print()
-    print(f"READY  {summary}")
+    print(ready_line)
+    print()
+    print("Post that line as a Phase 0 issue — this link has it filled in already:")
+    print(f"    {issue_url(ready_line)}")
+    print("Do it even if something failed. That is what the three days are for.")
 
     if blocking:
         print()

@@ -1,113 +1,155 @@
 # Phase 0 — setup, before session 1
 
-About 25 minutes. **Do all of it at home.** Session 1 is hands-on from the first
-minute and there is no time to install anything in the room.
+About 10 minutes in a Codespace, about 25 on your own machine. **Do it at
+home.** Session 1 is hands-on from the first minute and there is no time to
+install anything in the room.
 
-At the end you run one command and paste one line into a form. That line tells
-the instructor whether you're ready, three days early, while there is still time
-to fix things by email.
+At the end you run one command and paste one line into an issue on this
+repository. That line tells the instructor whether you're ready, three days
+early, while there is still time to fix things.
 
 Everything here is free. No credit card is required at any point.
 
 ---
 
-## 0. Open a terminal
+## Choose how you will work
 
-Every command in this workshop is typed into a terminal. Which one does not
-matter much, but you have to know where it is, so pick one now and use the same
-one throughout.
+Two ways in. They differ only in how the toolchain gets onto a machine —
+from *Get a Google AI Studio key* onwards the two paths are the same text,
+the same commands and the same repository.
 
-**Windows** — use **PowerShell**, not the old `cmd` prompt. Press `Win`, type
-`powershell`, press Enter. If you have Windows Terminal installed, that opens
-PowerShell by default and is nicer. Some commands below differ between
-PowerShell and `cmd`; where they do, this guide says which is which.
+### A. GitHub Codespaces — recommended
 
-**macOS** — press `Cmd+Space`, type `terminal`, press Enter. iTerm2 works
-identically if you already have it.
+A Codespace is a container running on GitHub's machines, with a real terminal,
+a real editor and this repository already in it. Everything slow is already
+done: `uv`, `cloudflared`, the dependencies, the 42 documents, the 60,000
+sightings and the 80 MB embedding model are all baked into the image.
 
-**Linux** — whatever your distribution gave you: `Ctrl+Alt+T` opens it on most.
+1. Sign in to [github.com](https://github.com) — a free personal account is
+   enough. Create one if you don't have one.
+2. On this repository, click the green **Code** button → **Codespaces** →
+   **Create codespace on main**.
+3. Wait. The first one takes a couple of minutes; after that, reopening it is
+   seconds.
+4. When the editor appears, open a terminal: `` Ctrl+` ``, or
+   **View → Terminal**. It opens in the repository root, which is where every
+   command in this workshop belongs.
+5. Put yourself on your own branch:
 
-**Or your editor's built-in terminal.** VS Code, PyCharm and Cursor all have
-one, and it is the more comfortable option because the terminal and the files
-are in the same window:
+   ```bash
+   git switch -c mywork origin/step-00
+   ```
 
-- **VS Code / Cursor**: `File → Open Folder` on the cloned repo, then
-  `` Ctrl+` `` (`` Cmd+` `` on macOS), or `View → Terminal`.
-- **PyCharm**: `Alt+F12`, or `View → Tool Windows → Terminal`.
+Then skip to *Get a Google AI Studio key*.
 
-The built-in terminal is the *same* shell as the OS one — on Windows check the
-dropdown in the terminal panel says `powershell` and not `Command Prompt`.
+**Four things to know about a Codespace.**
 
-Three things that matter regardless of which you picked:
+*Stopping it.* It stops itself after 30 minutes of inactivity, and you can stop
+it yourself from [github.com/codespaces](https://github.com/codespaces).
+GitHub gives every personal account a free monthly allowance and this workshop
+uses a small part of it, but the meter runs while the container is awake, not
+while it is working. Stop it when you're done for the day.
 
-1. **Your working directory must be the repository root.** That is the folder
-   containing `pyproject.toml`. Every command in this guide assumes it. After
-   step 3 you get there with `cd polimi-workshop`; check with `pwd` (macOS,
-   Linux, PowerShell) or `cd` with no arguments (Windows `cmd`).
-2. **"Close and reopen your terminal" means the whole window**, not just a new
-   tab in the same one. Installers change `PATH`, and only a freshly started
-   shell reads it. In VS Code that means closing the terminal panel with the
-   bin icon and opening a new one — or, if that still fails, restarting the
-   editor.
+*It remembers.* Stopping is not deleting: your files, your branch, your `.env`
+and the downloaded model are all still there when you start it again. This is
+the whole reason we are not using a notebook service that resets.
+
+*It expires.* A Codespace nobody opens for 30 days is deleted. If more than a
+month passes between the two sessions, expect to create a fresh one — which is
+fine, it just means doing Phase 0's key-pasting again.
+
+*Keep your ports private.* VS Code will offer to forward ports and mark them
+public. Don't. marimo runs arbitrary Python, so a public marimo port is a
+public shell on your container. Session 2 gives the agent a public address a
+different way, through a tunnel, and that one is deliberate.
+
+### B. Your own machine
+
+Nothing wrong with this route — it is what you would do on a real project, and
+you end up understanding the toolchain rather than inheriting it. It costs
+about fifteen minutes more, all of it installing things.
+
+**Open a terminal.** Every command in this workshop is typed into one. Which
+one does not matter much, but pick one now and use the same one throughout.
+
+- **Windows** — use **PowerShell**, not the old `cmd` prompt. Press `Win`, type
+  `powershell`, press Enter.
+- **macOS** — press `Cmd+Space`, type `terminal`, press Enter.
+- **Linux** — `Ctrl+Alt+T` on most distributions.
+- **Or your editor's built-in one.** VS Code, PyCharm and Cursor all have one,
+  and it is the more comfortable option because the terminal and the files are
+  in the same window. VS Code / Cursor: `File → Open Folder` on the cloned
+  repo, then `` Ctrl+` ``. PyCharm: `Alt+F12`. On Windows, check the dropdown
+  in the terminal panel says `powershell` and not `Command Prompt`.
+
+Three things that matter regardless:
+
+1. **Your working directory must be the repository root** — the folder
+   containing `pyproject.toml`. Every command assumes it. Check with `pwd`.
+2. **"Close and reopen your terminal" means the whole window**, not a new tab
+   in the same one. Installers change `PATH`, and only a freshly started shell
+   reads it. In VS Code, close the panel with the bin icon and open a new one,
+   or restart the editor.
 3. **You will need a second terminal in session 2**, running alongside the
-   first — one for the tunnel, one for the bot. Open a second window, or a
-   second tab (`Ctrl+Shift+5` in VS Code splits the panel). Both need to be in
-   the repository root.
+   first — one for the tunnel, one for the bot.
 
-> **Do not use a Python REPL or a Jupyter cell for these.** Commands starting
+> **Do not type these into a Python REPL or a Jupyter cell.** Commands starting
 > with `uv`, `git`, `cd` or `curl` go to the shell. If you see
 > `SyntaxError: invalid syntax` on a line starting with `uv`, you typed a shell
 > command into Python.
 
----
+**Install `uv`.** It manages both Python and the project's dependencies, so you
+do **not** need to install Python yourself — whatever version you already have
+is irrelevant.
 
-## 1. Install `uv`
-
-`uv` manages both Python and the project's dependencies, so you do **not** need
-to install Python yourself — whatever version you already have is irrelevant.
-
-**Windows** (PowerShell):
+Windows (PowerShell):
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-**macOS / Linux**:
+macOS / Linux:
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-Close and reopen your terminal, then check:
-```
-uv --version
-```
+Close and reopen your terminal, then check with `uv --version`.
 
-## 2. Install `cloudflared`
+**Install `cloudflared`.** Needed in session 2, to give your agent a public
+address.
 
-Needed in session 2, to give your agent a public address. Installing it now
-means one less thing to go wrong later.
+- **Windows**: `winget install --id Cloudflare.cloudflared`
+- **macOS**: `brew install cloudflared`
+- **Linux**: see [Cloudflare's downloads page](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/)
 
-**Windows**: `winget install --id Cloudflare.cloudflared`
-**macOS**: `brew install cloudflared`
-**Linux**: see https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/
+Close and reopen your terminal again — the installer adds `cloudflared` to
+`PATH`, and a terminal that was already open keeps the old one. Check with
+`cloudflared --version`.
 
-Then close and reopen your terminal, as in step 1: the installer adds
-`cloudflared` to `PATH`, and a terminal that was already open keeps the old one.
-Check with `cloudflared --version`.
-
-## 3. Get the code
+**Get the code, and the data.**
 
 ```bash
-git clone https://github.com/<org>/polimi-workshop.git
-cd polimi-workshop
+git clone https://github.com/LuchettiMauro/gsom-september-2026-workshop.git
+cd gsom-september-2026-workshop
 git switch -c mywork origin/step-00
-uv sync
+uv sync --extra serve
+uv run python scripts/fetch_data.py
 ```
 
-The `git switch -c mywork` matters: it puts you on your own branch from the
-start. The `step-*` branches are regenerated between sessions, and anything you
-commit directly onto one will be overwritten.
+`git switch -c mywork` matters: it puts you on your own branch from the start.
+The `step-*` branches are regenerated between sessions, and anything you commit
+directly onto one will be overwritten.
 
-## 4. Get a Google AI Studio key
+`--extra serve` matters too: it installs the web server and the Telegram
+interface that session 2 runs on. Leave it out and notebook 07 fails at import.
+
+`fetch_data.py` pulls 42 declassified documents and ~60,000 UFO sighting
+reports. About a minute.
+
+---
+
+Everything from here is the same on both routes.
+
+## 1. Get a Google AI Studio key
 
 1. Go to https://aistudio.google.com/apikey
 2. Sign in with any Google account
@@ -119,7 +161,7 @@ Free, and no credit card. This is the only key you actually need.
 > protections as the paid tier. Google's terms make that explicit for the EEA,
 > Switzerland and the UK.
 
-## 5. Get a Langfuse account
+## 2. Get a Langfuse account
 
 This is where every agent run gets recorded. You'll spend half of session 2
 looking at your own traces here.
@@ -130,7 +172,7 @@ looking at your own traces here.
 4. Settings → API Keys → **Create new API key**
 5. Copy both the public key (`pk-lf-...`) and the secret key (`sk-lf-...`)
 
-## 6. Get a Telegram bot token
+## 3. Get a Telegram bot token
 
 Used in session 2. Takes about 30 seconds and the token never expires.
 
@@ -139,7 +181,10 @@ Used in session 2. Takes about 30 seconds and the token never expires.
 3. Pick a name, then a username ending in `bot`
 4. Copy the token it gives you
 
-## 7. Fill in your keys
+## 4. Fill in your keys
+
+In a Codespace there is already a `.env` waiting for you — open it and skip the
+copying. On your own machine, make one first:
 
 ```bash
 cp .env.example .env        # macOS / Linux
@@ -147,47 +192,44 @@ copy .env.example .env      # Windows cmd
 Copy-Item .env.example .env # Windows PowerShell
 ```
 
-Open `.env` and paste in the four values from steps 4–6. `.env` is git-ignored,
-so your keys never leave your machine.
+Paste in the four values from steps 1–3. `.env` is git-ignored, so your keys
+never leave your machine — and never end up in a commit.
 
-## 8. Download the data
+The two `TELEGRAM_WEBHOOK_*` and `TELEGRAM_ALLOWED_*` lines can stay empty for
+now. Notebook 07 fills them in when it needs them.
 
-```bash
-uv run python scripts/fetch_data.py
-```
-
-Fetches 42 declassified documents and ~60,000 UFO sighting reports. About a
-minute.
-
-## 9. Run the check
+## 5. Run the check
 
 ```bash
 uv run python scripts/check.py
 ```
 
 This makes a real (tiny) call to Gemini, writes a real trace to Langfuse, and
-downloads the local embedding model — roughly 80 MB, which is exactly the sort
-of thing that should not happen 25 times over lecture-room wifi.
+on your own machine downloads the embedding model — roughly 80 MB, which is
+exactly the sort of thing that should not happen 25 times over lecture-room
+wifi.
 
 It prints something like:
 
 ```
-READY  uv=0.9.2  python=3.12.8  gemini=ok  langfuse=ok  telegram=ok
-       fastembed=ok  cloudflared=ok  marimo=ok  data=ok
+READY  uv=0.9.2  python=3.12.8  marimo=ok  serve=ok  data=ok  gemini=ok
+       langfuse=ok  fastembed=ok  telegram=ok  cloudflared=ok
 ```
 
-## 10. Submit that line
+## 6. Open a Phase 0 issue
 
-Paste the `READY ...` line into the form linked in the course announcement, at
-least **three days before session 1**.
+The last thing `check.py` prints is a link that opens a new issue on this
+repository with your `READY` line already in it. Click it and submit, at least
+**three days before session 1**.
 
-If anything says `MISSING` or `FAILED`, check
-[TROUBLESHOOTING.md](TROUBLESHOOTING.md) first — and if it's still broken, send
-the output. That's what the three days are for.
+The line is only `label=value` pairs — no keys, no URLs, nothing private.
 
----
+**Open it even if something says `MISSING` or `FAILED`.** That is what the
+three days are for. Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md) first, then
+have a look at the other `phase-0` issues: if someone hit the same wall, the
+answer is probably already sitting there.
 
-## 11. Optional: open the first notebook once
+## 7. Optional: open the first notebook once
 
 Not required, but it removes the last surprise from the start of session 1.
 
@@ -214,3 +256,8 @@ keys**.
 If you want to run it yourself, both require a payment method and a small
 top-up (around €5 each). Add the keys to `.env` and everything else works
 unchanged.
+
+One caution if you are on a Codespace: a key with billing attached is a
+different kind of thing from the free ones above. The Google, Langfuse and
+Telegram credentials can at worst cost you a quota; a card-backed key can cost
+you money. Keep those two on your own machine.

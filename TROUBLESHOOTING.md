@@ -8,7 +8,8 @@ The failures that actually happen, roughly in the order they happen.
 
 Any of them — your OS terminal or your editor's built-in one — as long as the
 working directory is the repository root, the folder holding `pyproject.toml`.
-[PHASE0 step 0](PHASE0.md) walks through opening one on each platform.
+[PHASE0.md](PHASE0.md) walks through opening one, on a Codespace and on
+each platform.
 
 Two rules that account for most of the confusion:
 
@@ -84,10 +85,14 @@ Your environment was installed before that dependency was added to
 
 ```
 git pull
-uv sync
+uv sync --extra serve
 ```
 
 Then restart the notebook — a running kernel keeps the old environment.
+
+If the missing package is `telebot`, `fastapi` or `uvicorn`, it is the
+`--extra serve` that is missing rather than the sync: those three only install
+with it, and `uv run python scripts/check.py` reports them as `serve=MISSING`.
 
 ---
 
@@ -174,7 +179,7 @@ Two ways out:
 
 ### `No sightings data at data/nuforc.parquet`
 
-You skipped step 8:
+You skipped `fetch_data.py`:
 
 ```bash
 uv run python scripts/fetch_data.py
@@ -211,6 +216,29 @@ restore_prebuilt_index()
 - Is the tunnel URL `https`? Telegram refuses plain HTTP.
 - Some networks block outbound tunnels. Tether to your phone and try again —
   this is the single most likely cause on a university network.
+
+Run the `getWebhookInfo` cell in notebook 07: `last_error_message` says which
+of these it is.
+
+---
+
+### The bot is running, the tunnel is up, and every message is silently ignored
+
+Two guards can drop a message, and they fail differently.
+
+**`403` in `getWebhookInfo`, or `Invalid webhook secret token` in terminal 1.**
+Telegram is delivering, and Agno is refusing. The `secret_token` you registered
+with `setWebhook` does not match `TELEGRAM_WEBHOOK_SECRET_TOKEN` in `.env` —
+usually because you changed one and not the other. Re-run the `setWebhook`
+cell, which reads the current value.
+
+**`ignored a message from chat 123456789` in terminal 1.** That is our
+allowlist, not Agno. The chat you are writing from is not in
+`TELEGRAM_ALLOWED_CHAT_IDS`. Copy the number from that line into `.env` and
+restart the bot: a running process keeps the old settings.
+
+**Nothing at all in terminal 1.** Telegram is not reaching you. That is the
+previous entry, not this one.
 
 ---
 

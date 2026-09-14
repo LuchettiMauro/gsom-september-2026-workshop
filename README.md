@@ -13,34 +13,45 @@ remote-viewing programme (STARGATE) and UFO sighting reports.
 
 ## Before session 1
 
-**Do this at home, not in the room.** Follow **[PHASE0.md](PHASE0.md)** — it takes
-about 25 minutes and covers installing the toolchain and getting the (free) API
-keys you need. Nothing in session 1 works without it.
+**Do this at home, not in the room.** Follow **[PHASE0.md](PHASE0.md)**.
+Nothing in session 1 works without it.
+
+It offers two routes. **GitHub Codespaces** is the recommended one: click a
+button, get a container with the toolchain, the corpus and the embedding model
+already in it, and spend your ten minutes on the four API keys — which are the
+only part nobody can do for you. **Your own machine** works just as well and
+takes about twenty-five minutes, most of it installing `uv` and `cloudflared`.
 
 The last step prints a line like this:
 
 ```
-READY  uv=0.9.2  python=3.12.8  gemini=ok  langfuse=ok  telegram=ok
-       fastembed=ok  cloudflared=ok  marimo=ok
+READY  uv=0.9.2  python=3.12.8  marimo=ok  serve=ok  data=ok  gemini=ok
+       langfuse=ok  fastembed=ok  telegram=ok  cloudflared=ok
 ```
 
-Paste that line into the readiness form linked in PHASE0.md at least three days
-before the session, so anything broken can be fixed by email rather than in class.
+`check.py` then hands you a link that opens an issue on this repository with
+that line already filled in. Submit it at least three days before the session,
+so anything broken can be fixed by email rather than in class — and open it
+even if something failed, because that is what the three days are for.
 
 ---
 
 ## Quick start
 
-All of these go into a **terminal** — your OS terminal, or the one built into
-your editor; [PHASE0 step 0](PHASE0.md) covers which one and how to open it. Run
-them from the repository root, the folder containing `pyproject.toml`.
+In a **Codespace**, everything below the `git switch` is already done — open a
+terminal (`` Ctrl+` ``) and start there.
+
+On your own machine, all of these go into a **terminal**: your OS terminal, or
+the one built into your editor. [PHASE0.md](PHASE0.md) covers which one and how
+to open it. Run them from the repository root, the folder containing
+`pyproject.toml`.
 
 ```bash
-git clone https://github.com/<org>/polimi-workshop.git
-cd polimi-workshop
+git clone https://github.com/LuchettiMauro/gsom-september-2026-workshop.git
+cd gsom-september-2026-workshop
 git switch -c mywork origin/step-00
 
-uv sync
+uv sync --extra serve
 cp .env.example .env        # then fill in your keys
 uv run python scripts/fetch_data.py
 uv run python scripts/check.py
@@ -139,6 +150,12 @@ commit what you have, switch, and you are back in sync in ten seconds.
 
 **Use the agent. Don't fix it.**
 
+Starting it is one command, which also cleans up after itself when you stop it:
+
+```bash
+uv run python scripts/serve_bot.py
+```
+
 Ask it 25 questions you actually find interesting — easy ones, nasty ones, a few in
 Italian. Do not improve the prompt, do not adjust the chunking, do not correct
 anything you see going wrong. Every conversation is traced automatically.
@@ -155,6 +172,14 @@ Ask it about UFOs, not about yourself — you'll be sharing findings with the ro
 
 See **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)**. It covers the failures that
 actually happen, in the order they actually happen.
+
+---
+
+## Why it is built this way
+
+The decisions that would otherwise be invisible — why Codespaces rather than
+Colab, why a tunnel rather than a forwarded port, why the bot answers only you
+— are recorded in [docs/adr/](docs/adr/).
 
 ---
 

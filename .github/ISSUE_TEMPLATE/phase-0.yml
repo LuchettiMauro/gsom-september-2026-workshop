@@ -1,0 +1,42 @@
+name: Phase 0 — I'm ready
+description: Paste the line that scripts/check.py printed, at least three days before session 1.
+title: "Phase 0 — "
+labels: ["phase-0"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Open this even if something failed. Three days is enough time to fix
+        anything by email; five minutes before session 1 is not.
+
+        Before you post, have a look at the other `phase-0` issues — if someone
+        hit the same failure, the answer is probably already there.
+  - type: textarea
+    id: ready
+    attributes:
+      label: The READY line
+      description: The whole line, exactly as `uv run python scripts/check.py` printed it.
+      placeholder: "READY  uv=0.9.2  python=3.12.8  marimo=ok  data=ok  gemini=ok  ..."
+      render: text
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where are you running it?
+      options:
+        - GitHub Codespaces
+        - My own machine — macOS
+        - My own machine — Windows
+        - My own machine — Linux
+    validations:
+      required: true
+  - type: textarea
+    id: trouble
+    attributes:
+      label: Anything that says MISSING or FAILED
+      description: >
+        Paste the indented detail lines that came with it. Skip this if
+        everything is `ok`.
+    validations:
+      required: false

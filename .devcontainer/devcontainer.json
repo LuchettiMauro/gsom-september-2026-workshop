@@ -1,0 +1,40 @@
+{
+  "name": "Building and Measuring an Agent",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+
+  // Everything slow happens here, once, in the prebuild: the toolchain, the
+  // dependencies, the corpus and the 80 MB embedding model. A student who
+  // creates a Codespace should find all of it already there.
+  "onCreateCommand": "bash .devcontainer/setup.sh",
+  "waitFor": "onCreateCommand",
+
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+
+  // marimo serves the notebooks; the agent listens for Telegram in session 2.
+  // Both stay PRIVATE: the tunnel is what gives the agent a public address,
+  // and marimo runs arbitrary Python, so a public marimo port is a public
+  // shell. Do not change these to "public".
+  "forwardPorts": [2718, 7777],
+  "portsAttributes": {
+    "2718": { "label": "marimo", "onAutoForward": "openBrowserOnce", "visibility": "private" },
+    "7777": { "label": "agent (keep private)", "onAutoForward": "silent", "visibility": "private" }
+  },
+
+  "remoteEnv": {
+    "FASTEMBED_CACHE_PATH": "${containerWorkspaceFolder}/data/.cache",
+    "PATH": "${containerEnv:HOME}/.local/bin:${containerEnv:PATH}"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "charliermarsh.ruff"],
+      "settings": {
+        "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python"
+      }
+    }
+  }
+}
