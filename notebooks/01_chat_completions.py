@@ -9,14 +9,8 @@ def _(mo):
     mo.md(r"""
     # 01 · One question, three providers
 
-    **Behind? Start here.** In a terminal, in the repository root — not in a
-    cell of this notebook, and not in the terminal marimo is running in:
-
-    ```
-    git add -A && git commit -m "my work so far"
-    git fetch origin
-    git switch -c mywork-00 origin/step-00
-    ```
+    **Nothing to set up.** Phase 0 left you on your own branch with the whole
+    repository in it — every module these notebooks use is already there.
 
     ---
 

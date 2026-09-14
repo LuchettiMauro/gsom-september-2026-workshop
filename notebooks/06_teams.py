@@ -9,18 +9,11 @@ def _(mo):
     mo.md(r"""
     # 06 · Two specialists and a router
 
-    **Start here.** This notebook needs `stargate/teams.py`, which arrives
-    on `step-06`. Run this in a terminal, in the repository root — not in a
-    cell of this notebook, and not in the terminal marimo is running in:
+    **This notebook uses `stargate/teams.py`.** It is already in your
+    repository: nothing to fetch, nothing to switch.
 
-    ```
-    git add -A && git commit -m "my work so far"
-    git fetch origin
-    git switch -c mywork-06 origin/step-06
-    ```
-
-    Then shut this notebook down from marimo's home page and open it again, so
-    the kernel picks up the files that just appeared.
+    If an import fails, you are sitting on a `step-*` branch rather than your
+    own — see *cannot import name* in TROUBLESHOOTING.md.
 
     ---
 

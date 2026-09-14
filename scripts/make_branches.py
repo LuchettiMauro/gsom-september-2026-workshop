@@ -4,9 +4,11 @@
     uv run python scripts/make_branches.py --push     # and force-push
     uv run python scripts/make_branches.py --from wip # snapshot another branch
 
-`main` is the only source of truth. Every `step-NN` branch is a snapshot of it
-holding the package modules that exist by the end of that notebook — so a
-student who falls behind switches to one and is unblocked immediately.
+`main` is the only source of truth, and it is also where students branch from:
+they carry the whole package from day one, so no notebook interrupts itself for
+a branch switch. Every `step-NN` branch is a snapshot of `main` holding the
+package modules that exist by the end of that notebook — a checkpoint to fall
+back on, and the reference each notebook's Checkpoint block diffs against.
 
 The alternative, a chain of ten dependent branches, means rebasing all ten
 every time a typo is fixed on notebook 01. This regenerates all of them in
@@ -17,8 +19,8 @@ plumbing against a temporary index, so it is safe to run with uncommitted work
 in progress.
 
 WARNING: this force-updates the step branches. Students must always work on
-their own branch (`git switch -c mywork-05 origin/step-05`), never directly on
-a step branch.
+their own branch (`git switch -c mywork origin/main`), never directly on a step
+branch.
 """
 
 from __future__ import annotations
@@ -56,6 +58,7 @@ COMMON = [
     "notebooks/",
     "scripts/fetch_data.py",
     "scripts/check.py",
+    "scripts/build_index.py",
     "stargate/__init__.py",
     "stargate/config.py",
 ]
@@ -220,10 +223,11 @@ def selected(patterns: list[str], every_path: list[str]) -> set[str]:
     return keep
 
 
-# Notebook NN reads the modules that `step-NN` delivers, so its "Start here"
-# block must name `step-NN` and not `step-(NN-1)`. Getting that wrong ships a
-# branch where the notebook's first cell raises ImportError, which is exactly
-# the sort of thing nobody notices until twenty students hit it at once.
+# Students run every notebook from `main`, so this is not about their path
+# through the course. It is about the checkpoints: the `step-NN` branch a
+# notebook names is the one someone lands on after breaking something, and it
+# has to be able to run that notebook. A branch that cannot is an escape hatch
+# that drops you straight back into an ImportError.
 NOTEBOOK_START = re.compile(r"origin/(step-\d+)")
 STARGATE_IMPORT = re.compile(r"from stargate\.([a-z_]+)")
 STARGATE_FROM = re.compile(r"from stargate import ([a-z_, ]+)")

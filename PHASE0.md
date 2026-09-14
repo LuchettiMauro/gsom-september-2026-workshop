@@ -51,7 +51,7 @@ sightings and the 80 MB embedding model are all baked into the image.
    below, click once inside the terminal panel, paste it, and press Enter:
 
    ```bash
-   git switch -c mywork origin/step-00
+   git switch -c mywork origin/main
    ```
 
    Hover over the box and a **copy** icon appears in its top right corner —
@@ -160,14 +160,19 @@ Close and reopen your terminal again — the installer adds `cloudflared` to
 ```bash
 git clone https://github.com/LuchettiMauro/gsom-september-2026-workshop.git
 cd gsom-september-2026-workshop
-git switch -c mywork origin/step-00
+git switch -c mywork origin/main
 uv sync --extra serve
 uv run python scripts/fetch_data.py
 ```
 
-`git switch -c mywork` matters: it puts you on your own branch from the start.
-The `step-*` branches are regenerated between sessions, and anything you commit
-directly onto one will be overwritten.
+`git switch -c mywork` matters: it puts you on your own branch from the start,
+holding the whole repository. Every module the nine notebooks use is there from
+day one, so no notebook ever asks you to switch branches mid-lesson.
+
+Stay on that branch. The `step-*` branches still exist, as checkpoints to fall
+back on if you break something, and they are regenerated and force-pushed
+between sessions — so anything you commit directly onto one is overwritten
+without warning.
 
 `--extra serve` matters too: it installs the web server and the Telegram
 interface that session 2 runs on. Leave it out and notebook 07 fails at import.

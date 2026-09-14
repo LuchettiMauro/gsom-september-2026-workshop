@@ -49,7 +49,7 @@ to open it. Run them from the repository root, the folder containing
 ```bash
 git clone https://github.com/LuchettiMauro/gsom-september-2026-workshop.git
 cd gsom-september-2026-workshop
-git switch -c mywork origin/step-00
+git switch -c mywork origin/main
 
 uv sync --extra serve
 cp .env.example .env        # then fill in your keys
@@ -57,9 +57,11 @@ uv run python scripts/fetch_data.py
 uv run python scripts/check.py
 ```
 
-> **Always work on your own branch.** The `step-*` branches are regenerated and
-> force-pushed between sessions. If you commit directly onto one, your work will
-> be overwritten without warning.
+> **Always work on your own branch.** Branching from `main` gives you every
+> module the notebooks use, so nothing has to be fetched mid-lesson. The
+> `step-*` branches remain as checkpoints for when something breaks; they are
+> regenerated and force-pushed between sessions, so work committed directly
+> onto one is overwritten without warning.
 
 ---
 

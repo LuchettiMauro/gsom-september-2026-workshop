@@ -208,8 +208,9 @@ def check_langfuse() -> Result:
     """Authenticate and write one real trace, then print its URL.
 
     Deliberately drives the Langfuse SDK itself rather than going through
-    `stargate.observability`: that module is written in notebook 04, so on
-    `step-00` — where every student runs Phase 0 — it does not exist yet.
+    `stargate.observability`: that module arrives in notebook 04, so it is
+    absent from the early `step-*` checkpoints, and this check has to run
+    wherever a student happens to be standing.
     """
     cfg = settings()
     if not cfg.langfuse_configured:

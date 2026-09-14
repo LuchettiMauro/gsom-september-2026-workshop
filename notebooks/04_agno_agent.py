@@ -9,19 +9,12 @@ def _(mo):
     mo.md(r"""
     # 04 · The same thing, in six lines
 
-    **Start here.** This notebook needs `stargate/agents.py` and
-    `stargate/observability.py`, which arrive on `step-04`. Run this in a
-    terminal, in the repository root — not in a cell of this notebook, and
-    not in the terminal marimo is running in:
+    **This notebook uses `stargate/agents.py` and
+    `stargate/observability.py`.** Both are already in your repository:
+    nothing to fetch, nothing to switch.
 
-    ```
-    git add -A && git commit -m "my work so far"
-    git fetch origin
-    git switch -c mywork-04 origin/step-04
-    ```
-
-    Then shut this notebook down from marimo's home page and open it again, so
-    the kernel picks up the files that just appeared.
+    If an import fails, you are sitting on a `step-*` branch rather than your
+    own — see *cannot import name* in TROUBLESHOOTING.md.
 
     ---
 

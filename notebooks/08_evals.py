@@ -9,19 +9,11 @@ def _(mo):
     mo.md(r"""
     # 08 · How bad is it?
 
-    **Start here.** This notebook needs the `stargate/evaluators/` package,
-    which arrives on `step-08`. Run this in a terminal, in the repository
-    root — not in a cell of this notebook, and not in the terminal marimo is
-    running in:
+    **This notebook uses the `stargate/evaluators/` package.** It is already
+    in your repository: nothing to fetch, nothing to switch.
 
-    ```
-    git add -A && git commit -m "my work so far"
-    git fetch origin
-    git switch -c mywork-08 origin/step-08
-    ```
-
-    Then shut this notebook down from marimo's home page and open it again, so
-    the kernel picks up the files that just appeared.
+    If an import fails, you are sitting on a `step-*` branch rather than your
+    own — see *cannot import name* in TROUBLESHOOTING.md.
 
     ---
 

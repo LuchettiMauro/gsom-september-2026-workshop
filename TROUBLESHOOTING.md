@@ -56,25 +56,28 @@ opening the notebook, not while it is running.
 
 ### `cannot import name 'tools' from 'stargate'` (or `agents`, `knowledge`, `teams`, `loop`…)
 
-The module is not on your branch yet. Each notebook reads code that arrives with
-its own `step-NN` branch, and the **Start here** block at the top of the notebook
-is what puts it there. Run it:
+Your branch does not hold the whole package. Branching from `main` in Phase 0
+gives you every module the notebooks use; branching from a `step-*` checkpoint
+gives you only the modules that existed at that point in the course.
+
+Check where you are:
+
+```
+git branch --show-current
+ls stargate
+```
+
+If the module is missing, move onto your own branch off `main`:
 
 ```
 git add -A && git commit -m "my work so far"
 git fetch origin
-git switch -c mywork-02 origin/step-02
+git switch -c mywork origin/main
 ```
 
-(with the branch that notebook names — `02_tool_calling` wants `step-02`,
-`05_knowledge` wants `step-05`, and so on).
-
-Then **shut the notebook down and open it again**. A running kernel has already
-decided that `stargate.tools` does not exist and will keep saying so, however
-many times you re-run the cell.
-
-Confirm with `git branch --show-current` and `ls stargate` — the module should be
-sitting there.
+Then **shut the notebook down and open it again** from marimo's home page. A
+running kernel has already decided that `stargate.tools` does not exist and
+will keep saying so, however many times you re-run the cell.
 
 ---
 

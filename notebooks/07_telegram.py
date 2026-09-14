@@ -9,18 +9,11 @@ def _(mo):
     mo.md(r"""
     # 07 · The agent, on your phone
 
-    **Start here.** This notebook needs `telegram_bot.py`, which arrives on
-    `step-07`. Run this in a terminal, in the repository root — not in a
-    cell of this notebook, and not in the terminal marimo is running in:
+    **This notebook uses `telegram_bot.py`.** It is already in your
+    repository: nothing to fetch, nothing to switch.
 
-    ```
-    git add -A && git commit -m "my work so far"
-    git fetch origin
-    git switch -c mywork-07 origin/step-07
-    ```
-
-    Then shut this notebook down from marimo's home page and open it again, so
-    the kernel picks up the files that just appeared.
+    If an import fails, you are sitting on a `step-*` branch rather than your
+    own — see *cannot import name* in TROUBLESHOOTING.md.
 
     ---
 

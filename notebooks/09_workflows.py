@@ -11,10 +11,11 @@ def _(mo):
 
     *Take-home. Not covered in the sessions — read it when you have half an hour.*
 
-    ```
-    git fetch origin
-    git switch -c mywork-08 origin/step-08
-    ```
+    **Uses the `stargate/evaluators/` package.** It is already in your
+    repository: nothing to fetch, nothing to switch.
+
+    If an import fails, you are sitting on a `step-*` branch rather than your
+    own — see *cannot import name* in TROUBLESHOOTING.md.
 
     ---
 
