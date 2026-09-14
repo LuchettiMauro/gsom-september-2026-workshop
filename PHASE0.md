@@ -322,10 +322,10 @@ Copy-Item .env.example .env # Windows PowerShell
 ```
 
 Paste in the four values from steps [1](#1-get-a-google-ai-studio-key),
-[2](#2-get-a-langfuse-account) and [3](#3-get-a-telegram-bot-token). The arrows
-below point at the lines that take one:
+[2](#2-get-a-langfuse-account) and [3](#3-get-a-telegram-bot-token). One arrow
+each, in the order you collected them:
 
-![The .env file open in the editor, with arrows on the GOOGLE_API_KEY, LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, TELEGRAM_TOKEN and TELEGRAM_WEBHOOK_SECRET_TOKEN lines](img/Fill-in-keys.png)
+![The .env file open in the editor, with arrows on the GOOGLE_API_KEY, LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY and TELEGRAM_TOKEN lines](img/Fill-in-keys.png)
 
 Each value goes immediately after the `=` on its own line, with no spaces
 around it and no quotation marks — `GOOGLE_API_KEY=AIza...` and nothing else.
@@ -335,9 +335,9 @@ saved.
 `.env` is git-ignored, so your keys never leave your machine — and never end up
 in a commit.
 
-The last arrow, `TELEGRAM_WEBHOOK_SECRET_TOKEN`, and the `TELEGRAM_ALLOWED_*`
-line below it can stay empty for now. Notebook 07 fills them in when it needs
-them.
+The lines with no arrow stay as they are. `LANGFUSE_HOST` is already filled
+in, and the two below it — `TELEGRAM_WEBHOOK_SECRET_TOKEN` and
+`TELEGRAM_ALLOWED_CHAT_IDS` — stay empty until session 2 fills them in.
 
 ## 5. Run the check
 
