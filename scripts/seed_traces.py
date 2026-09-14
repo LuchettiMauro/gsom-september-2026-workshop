@@ -32,7 +32,7 @@ def main() -> int:
     args = parser.parse_args()
 
     if not settings().langfuse_configured:
-        print("Langfuse keys are not set. See PHASE0.md step 5.")
+        print("Langfuse keys are not set. See PHASE0.md, *Get a Langfuse account*.")
         return 1
 
     client = enable_tracing(quiet=True)
