@@ -1,7 +1,7 @@
 [project]
 name = "polimi-workshop"
 version = "0.1.0"
-description = "Building and measuring an AI agent — PoliMi lab sessions"
+description = "Building and measuring an AI agent — PoliMi GSOM lab sessions"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 license = { text = "MIT" }
@@ -47,6 +47,9 @@ providers = [
 # Needed for notebook 07 (Telegram) only.
 serve = [
     "agno[os]>=2.0",
+    # the Telegram interface lives behind its own extra, which pulls
+    # pyTelegramBotAPI; without it `telegram_bot.py` fails at import
+    "agno[telegram]>=2.0",
     "fastapi>=0.115",
     "uvicorn>=0.34",
 ]
