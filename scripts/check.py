@@ -18,6 +18,7 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -149,8 +150,20 @@ def _suggest_models(client: Any, limit: int = 6) -> str:
     return " Models your key can see: " + ", ".join(pick) + "."
 
 
+def _is_overloaded(exc: Exception) -> bool:
+    """503 / UNAVAILABLE: Google is busy. It says nothing about the key."""
+    text = str(exc).lower()
+    return "503" in text or "unavailable" in text or "overloaded" in text or "high demand" in text
+
+
 def check_gemini() -> Result:
-    """One real call. Costs about three tokens."""
+    """One real call. Costs about three tokens.
+
+    Free-tier Gemini returns 503 under load often enough that a whole cohort
+    checking in on the same evening will see it. Retrying twice turns most of
+    those into a pass, and the ones left say plainly that it is Google's
+    problem rather than the student's key.
+    """
     cfg = settings()
     if not cfg.google_api_key:
         return (
@@ -158,37 +171,58 @@ def check_gemini() -> Result:
             "MISSING",
             "GOOGLE_API_KEY not set — see PHASE0.md, *Get a Google AI Studio key*.",
         )
-    try:
-        from google import genai
+    client: Any = None
+    for attempt in range(3):
+        try:
+            from google import genai
 
-        client = genai.Client(api_key=cfg.google_api_key)
-        response = client.models.generate_content(
-            model=cfg.model, contents="Reply with the single word: ready"
-        )
-        if not getattr(response, "text", None):
-            return ("gemini", "FAILED", "The API returned an empty response.")
-    except Exception as exc:
-        detail = f"{type(exc).__name__}: {str(exc)[:160]}"
-        text = str(exc).lower()
-        if "no longer available" in text or "not found" in text or "404" in text:
-            detail = (
-                f"{cfg.model} is not available to this key — Google has retired it for "
-                f"new projects. Set STARGATE_MODEL in .env to a current model."
-                + _suggest_models(client)
+            client = genai.Client(api_key=cfg.google_api_key)
+            response = client.models.generate_content(
+                model=cfg.model, contents="Reply with the single word: ready"
             )
-        return ("gemini", "FAILED", detail)
-    return ("gemini", OK, f"model {cfg.model}")
+            if not getattr(response, "text", None):
+                return ("gemini", "FAILED", "The API returned an empty response.")
+            return ("gemini", OK, f"model {cfg.model}")
+        except Exception as exc:
+            if _is_overloaded(exc) and attempt < 2:
+                time.sleep(2 * (attempt + 1))
+                continue
+            detail = f"{type(exc).__name__}: {str(exc)[:160]}"
+            text = str(exc).lower()
+            if _is_overloaded(exc):
+                detail = (
+                    "Google's servers are busy (503). Your key is fine — this is load on "
+                    "their side. Wait a few minutes and run the check again."
+                )
+            elif "no longer available" in text or "not found" in text or "404" in text:
+                detail = (
+                    f"{cfg.model} is not available to this key — Google has retired it for "
+                    f"new projects. Set STARGATE_MODEL in .env to a current model."
+                    + (_suggest_models(client) if client is not None else "")
+                )
+            return ("gemini", "FAILED", detail)
+    return ("gemini", "FAILED", "Unreachable.")
 
 
 def check_langfuse() -> Result:
-    """Authenticate and write one real trace, then print its URL."""
+    """Authenticate and write one real trace, then print its URL.
+
+    Deliberately drives the Langfuse SDK itself rather than going through
+    `stargate.observability`: that module is written in notebook 04, so on
+    `step-00` — where every student runs Phase 0 — it does not exist yet.
+    """
     cfg = settings()
     if not cfg.langfuse_configured:
         return ("langfuse", "MISSING", "Keys not set — see PHASE0.md, *Get a Langfuse account*.")
     try:
-        from stargate.observability import enable_tracing, flush
+        # The SDK reads its credentials from the environment, not from arguments.
+        os.environ.setdefault("LANGFUSE_PUBLIC_KEY", cfg.langfuse_public_key or "")
+        os.environ.setdefault("LANGFUSE_SECRET_KEY", cfg.langfuse_secret_key or "")
+        os.environ.setdefault("LANGFUSE_HOST", cfg.langfuse_host)
 
-        client = enable_tracing(quiet=True)
+        from langfuse import get_client
+
+        client = get_client()
         if client is None:
             return ("langfuse", "FAILED", "Could not create a client.")
         if not client.auth_check():
@@ -196,8 +230,16 @@ def check_langfuse() -> Result:
         with client.start_as_current_observation(name="phase-0-check") as span:
             span.update(input="phase 0", output="ready")
             url = client.get_trace_url(trace_id=span.trace_id)
-        flush()
+        client.flush()
     except Exception as exc:
+        text = f"{type(exc).__name__} {exc}".lower()
+        if "unauthorized" in text or "401" in text or "403" in text:
+            return (
+                "langfuse",
+                "FAILED",
+                "Credentials rejected. Check both keys, and that the account is on the "
+                "EU region — the plain cloud.langfuse.com, which is what .env expects.",
+            )
         return ("langfuse", "FAILED", f"{type(exc).__name__}: {str(exc)[:160]}")
     return ("langfuse", OK, f"trace written: {url}")
 

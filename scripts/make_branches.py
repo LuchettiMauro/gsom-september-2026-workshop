@@ -49,6 +49,7 @@ COMMON = [
     "README.md",
     "PHASE0.md",
     "TROUBLESHOOTING.md",
+    "img/",
     "LICENSE",
     "NOTICE",
     "data/",

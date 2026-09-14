@@ -154,6 +154,18 @@ with increasing delays. If it keeps failing:
 
 ---
 
+### `503` / `UNAVAILABLE` / "this model is currently experiencing high demand"
+
+Not your key, and nothing you did: Google's free tier is loaded and is turning
+requests away. It clears on its own, usually within minutes.
+
+`scripts/check.py` already retries twice before reporting it. If it still
+fails, wait a few minutes and run it again — and if you are checking the
+evening before a session, remember that the rest of the room is doing the same
+thing at the same time.
+
+---
+
 ### The notebook re-runs cells I didn't touch, and it costs API calls
 
 marimo is reactive: editing a cell re-runs everything downstream. Since
