@@ -34,14 +34,41 @@ sightings and the 80 MB embedding model are all baked into the image.
 
 3. Wait. The first one takes a couple of minutes; after that, reopening it is
    seconds.
-4. When the editor appears, open a terminal: `` Ctrl+` ``, or
-   **View → Terminal**. It opens in the repository root, which is where every
-   command in this workshop belongs.
-5. Put yourself on your own branch:
+4. When the editor appears, open a terminal. Click the **☰** button at the
+   top left, then **View → Terminal**. A panel opens along the bottom of the
+   window: that panel is the terminal, and it is where every command in this
+   workshop gets typed.
+
+   ![The hamburger menu open on View, with Terminal highlighted in the submenu](img/Open-terminal.png)
+
+   The editor speaks whatever language your browser does, so your menu may
+   read *Visualizza → Terminale*, as in the screenshot above. There is a
+   keyboard shortcut too — the menu shows it next to the word Terminal — but
+   it lands on a different key depending on your keyboard, so the menu is the
+   reliable way in.
+
+5. Give yourself your own copy of the workshop files to work in. Copy the line
+   below, click once inside the terminal panel, paste it, and press Enter:
 
    ```bash
    git switch -c mywork origin/step-00
    ```
+
+   Hover over the box and a **copy** icon appears in its top right corner —
+   that is the safest way to copy, because a single wrong character makes the
+   command fail. To paste into the terminal: `Ctrl+V` on Windows and Linux,
+   `Cmd+V` on a Mac.
+
+   Once pasted, it looks like this: the command sits at the end of the last
+   line, waiting for you to press Enter.
+
+   ![The terminal panel with the git switch command pasted at the prompt, not yet run](img/Lancia-comando.png)
+
+   If nothing seems to happen after Enter, look for a line mentioning
+   `mywork`; that means it worked.
+
+   Every one of these boxes works the same way for the rest of the workshop:
+   copy, paste into the terminal, press Enter.
 
 Then skip to *Get a Google AI Studio key*.
 
