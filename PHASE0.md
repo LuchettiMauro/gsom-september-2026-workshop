@@ -177,15 +177,40 @@ reports. About a minute.
 
 ---
 
-Everything from here is the same on both routes.
+Everything from here is the same on both routes. The screenshots below are in
+Italian: both sites follow the language of your account, so your buttons may
+read differently, but they sit in the same places.
 
 ## 1. Get a Google AI Studio key
 
-1. Go to https://aistudio.google.com/apikey
-2. Sign in with any Google account
-3. **Create API key**, then copy it
+This is the key that lets your code talk to Gemini. Free, and no credit card.
+It is the only key you actually need.
 
-Free, and no credit card. This is the only key you actually need.
+1. Go to https://aistudio.google.com/apikey and sign in with any Google
+   account. You land on the **API keys** page, empty the first time. Click
+   **Create API key**, top right.
+
+   ![The Google AI Studio API keys page, empty, with the Create API key button in the top right corner](img/Google-api-key-1.png)
+
+2. A box asks for a name and a project. The first time there is no project to
+   choose from, so open the dropdown and pick **Create project**.
+
+   ![The Create a new key dialog with the project dropdown open on Create project](img/Google-api-key-2.png)
+
+3. Name the project — `polimi-workshop` does fine — and confirm.
+
+   ![The Create a new project dialog with polimi-workshop typed in the name field](img/Google-api-key-3.png)
+
+4. You are back at the first box, your new project now selected. Click
+   **Create key**.
+
+   ![The Create a new key dialog with the project filled in and the Create key button](img/Google-api-key-4.png)
+
+5. The key appears. Click the copy icon beside it, and paste it straight away
+   somewhere you can find in a minute: an empty note, or the `.env` file from
+   [step 4](#4-fill-in-your-keys) if you already have it open.
+
+   ![The API key details dialog with the copy icon next to the key highlighted](img/Google-api-key-5.png)
 
 > If you're in the EU, your prompts on the free tier get the same data
 > protections as the paid tier. Google's terms make that explicit for the EEA,
@@ -196,11 +221,38 @@ Free, and no credit card. This is the only key you actually need.
 This is where every agent run gets recorded. You'll spend half of session 2
 looking at your own traces here.
 
-1. Go to https://cloud.langfuse.com and sign up
-2. **Choose the EU region** when asked
-3. Create an organisation, then a project (call it anything)
-4. Settings → API Keys → **Create new API key**
-5. Copy both the public key (`pk-lf-...`) and the secret key (`sk-lf-...`)
+1. Go to https://cloud.langfuse.com and sign up. **Choose the EU region** when
+   asked: the EU one is the plain `cloud.langfuse.com` address, and that is
+   the address `.env` already expects.
+
+2. The first screen offers to create an organisation. Click
+   **New Organization**.
+
+   ![The Langfuse Organizations page with the New Organization button](img/Langfuse-new-organization-1.png)
+
+3. Give it a name — anything at all — and click **Create**. The *Enable AI
+   powered features* switch makes no difference to this workshop; leave it
+   however you find it.
+
+   ![The New Organization form, a name typed in, with the Create button below](img/Langfuse-new-organization-2.png)
+
+4. Langfuse then asks for a project. Name it and click **Create** again.
+
+   ![The New Project form with a project name and the Create button](img/Langfuse-new-project.png)
+
+5. The project opens on *Time to log your first trace*. Click
+   **Create new API key**.
+
+   ![The project Tracing page with the Create new API key button under step 1](img/Langfuse-create-api-key-1.png)
+
+6. Two keys appear: a secret key starting `sk-lf-` and a public key starting
+   `pk-lf-`. Copy both with the icons on the right.
+
+   ![The Create API keys panel showing the Secret Key and Public Key fields with their copy buttons](img/Langfuse-create-api-key-2.png)
+
+   **The secret key is shown once and never again.** If you close this panel
+   without copying it, nothing is broken — you just come back and create a
+   second pair, and use those instead.
 
 ## 3. Get a Telegram bot token
 
