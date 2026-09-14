@@ -213,7 +213,8 @@ Used in session 2. Takes about 30 seconds and the token never expires.
 
 ## 4. Fill in your keys
 
-In a Codespace there is already a `.env` waiting for you — open it and skip the
+In a Codespace there is already a `.env` waiting for you: find it in the file
+list down the left side of the editor and click it to open, then skip the
 copying. On your own machine, make one first:
 
 ```bash
@@ -223,12 +224,22 @@ Copy-Item .env.example .env # Windows PowerShell
 ```
 
 Paste in the four values from steps [1](#1-get-a-google-ai-studio-key),
-[2](#2-get-a-langfuse-account) and [3](#3-get-a-telegram-bot-token). `.env` is
-git-ignored, so your keys never leave your machine — and never end up in a
-commit.
+[2](#2-get-a-langfuse-account) and [3](#3-get-a-telegram-bot-token). The arrows
+below point at the lines that take one:
 
-The two `TELEGRAM_WEBHOOK_*` and `TELEGRAM_ALLOWED_*` lines can stay empty for
-now. Notebook 07 fills them in when it needs them.
+![The .env file open in the editor, with arrows on the GOOGLE_API_KEY, LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, TELEGRAM_TOKEN and TELEGRAM_WEBHOOK_SECRET_TOKEN lines](img/Fill-in-keys.png)
+
+Each value goes immediately after the `=` on its own line, with no spaces
+around it and no quotation marks — `GOOGLE_API_KEY=AIza...` and nothing else.
+Then save the file: `Ctrl+S`, or `Cmd+S` on a Mac. Nothing works until it is
+saved.
+
+`.env` is git-ignored, so your keys never leave your machine — and never end up
+in a commit.
+
+The last arrow, `TELEGRAM_WEBHOOK_SECRET_TOKEN`, and the `TELEGRAM_ALLOWED_*`
+line below it can stay empty for now. Notebook 07 fills them in when it needs
+them.
 
 ## 5. Run the check
 
