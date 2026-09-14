@@ -29,6 +29,9 @@ sightings and the 80 MB embedding model are all baked into the image.
    enough. Create one if you don't have one.
 2. On this repository, click the green **Code** button → **Codespaces** →
    **Create codespace on main**.
+
+   ![The Code button, the Codespaces tab, and the Create codespace on main button](img/Create-codespace.png)
+
 3. Wait. The first one takes a couple of minutes; after that, reopening it is
    seconds.
 4. When the editor appears, open a terminal: `` Ctrl+` ``, or
