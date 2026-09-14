@@ -256,12 +256,58 @@ looking at your own traces here.
 
 ## 3. Get a Telegram bot token
 
-Used in session 2. Takes about 30 seconds and the token never expires.
+Used in session 2. Takes about a minute, and the token never expires. Do it on
+the phone or on Telegram Desktop, whichever you already use.
 
-1. Open Telegram and message [@BotFather](https://t.me/botfather)
-2. Send `/newbot`
-3. Pick a name, then a username ending in `bot`
-4. Copy the token it gives you
+1. In Telegram, start a new chat: the pencil icon at the top right of your
+   chat list.
+
+   ![The Telegram chat list header, with the new message pencil icon on the right](img/Telegram-1.jpg)
+
+2. Search for `@BotFather` and open the result with the blue tick. There are
+   copycats with similar names; the verified one is the real one.
+
+   ![The new message screen with the search field](img/Telegram-2.jpg)
+
+   ![The search results showing BotFather with a blue verified tick](img/Telegram-3.jpg)
+
+3. Open the chat and press **Start** — *Avvia*, in the screenshot.
+
+   ![The BotFather chat before starting it, with the Start button at the bottom](img/Telegram-4.jpg)
+
+4. Send `/newbot`.
+
+   ![The BotFather chat with /newbot typed in the message box](img/Telegram-5.jpg)
+
+5. It asks for a name. Anything readable does: this is the name people see at
+   the top of the chat, and you can change it later.
+
+   ![BotFather asking for a name, with polimi-workshop typed as the answer](img/Telegram-6.jpg)
+
+6. Then it asks for a username. This one has rules: it must end in `bot`, it
+   may contain only letters, numbers and underscores — no hyphens, no
+   spaces — and it must not be taken already. Expect to try two or three
+   before one sticks; BotFather simply asks again each time.
+
+   ![BotFather asking for a username ending in bot](img/Telegram-7.jpg)
+
+7. BotFather replies *Done!* and, under **Use this token to access the HTTP
+   API**, your token. Tap it to copy it.
+
+   ![The Done message from BotFather with an arrow pointing at the token line](img/Telegram-8.png)
+
+**That token is the value for `TELEGRAM_TOKEN`**, and for nothing else. The
+other two Telegram lines in `.env` are filled in later, not by you and not
+now:
+
+- `TELEGRAM_WEBHOOK_SECRET_TOKEN` — a random string that
+  `scripts/serve_bot.py` invents the first time you run it in session 2, and
+  writes into `.env` itself.
+- `TELEGRAM_ALLOWED_CHAT_IDS` — your own chat id, which you can only learn by
+  messaging your bot once. Session 2 covers it.
+
+Anyone holding the token can drive your bot, so treat it like a password: it
+belongs in `.env`, which is git-ignored, and nowhere else.
 
 ## 4. Fill in your keys
 
