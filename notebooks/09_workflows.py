@@ -9,8 +9,6 @@ def _(mo):
     mo.md(r"""
     # 09 · When you don't want an agent deciding
 
-    *Take-home. Not covered in the sessions — read it when you have half an hour.*
-
     **Uses the `stargate/evaluators/` package.** It is already in your
     repository: nothing to fetch, nothing to switch.
 
