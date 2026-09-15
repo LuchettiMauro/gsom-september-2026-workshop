@@ -92,6 +92,30 @@ That terminal is now **busy** — it belongs to marimo until you stop it. Do not
 type further commands into it. Open a second terminal window or tab for
 anything else (`git`, `uv run pytest`, and in session 2 the tunnel).
 
+### Picking it up again after a break
+
+A stopped Codespace keeps your files, your branch, your `.env` and the cached
+model. What it does not keep is anything that was *running*, marimo included.
+So every time you come back:
+
+1. Open [github.com/codespaces](https://github.com/codespaces) and click the
+   codespace for this repository. It wakes in seconds.
+2. Open a terminal: the **☰** button at the top left, then
+   **View → Terminal**.
+3. Start the server again:
+
+   ```bash
+   uv run marimo edit --no-token
+   ```
+
+4. Open the page the way you did the first time: **Open in Browser** in the
+   notification at the bottom right, or the **PORTS** tab, row *marimo*.
+
+**You never need to activate `.venv`.** Every command here begins with
+`uv run`, which finds the project's environment on its own. If your prompt has
+lost its `(polimi-workshop)` prefix after a restart, nothing is broken and
+there is nothing to `source` — `uv run` behaves identically either way.
+
 ### Moving from one notebook to the next
 
 Each notebook ends with a **Checkpoint** naming the next one. To get there:

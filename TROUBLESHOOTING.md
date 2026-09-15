@@ -20,6 +20,27 @@ Two rules that account for most of the confusion:
 
 ---
 
+### I restarted the Codespace and I'm not in `.venv` any more
+
+You do not need to be. Every command in this workshop starts with `uv run`,
+which locates the project's environment itself — `uv run marimo edit
+--no-token`, `uv run python scripts/check.py`, `uv run pytest`. There is
+nothing to activate and nothing to `source`, and the `(polimi-workshop)` prefix
+on the prompt is not a requirement for any of it.
+
+What a restart really costs you is the *running* processes. marimo is not
+serving any more, so start it again:
+
+```
+uv run marimo edit --no-token
+```
+
+Same for session 2: the bot and the tunnel are both gone, and the tunnel hands
+out a new address each time, so notebook 07's webhook has to be pointed at the
+new one.
+
+---
+
 ### marimo asks for an access key, or I can't tell what to click to open it
 
 Start it as the guide does, with the flag:

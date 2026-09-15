@@ -82,7 +82,11 @@ while it is working. Stop it when you're done for the day.
 
 *It remembers.* Stopping is not deleting: your files, your branch, your `.env`
 and the downloaded model are all still there when you start it again. This is
-the whole reason we are not using a notebook service that resets.
+the whole reason we are not using a notebook service that resets. What does not
+survive is anything that was *running*: after a restart you open a terminal and
+start marimo again, which is one command and no setup —
+[*Picking it up again after a break*](README.md#picking-it-up-again-after-a-break)
+in README.md has it.
 
 *It expires.* A Codespace nobody opens for 30 days is deleted. If more than a
 month passes between the two sessions, expect to create a fresh one — which is
