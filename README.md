@@ -16,11 +16,10 @@ remote-viewing programme (STARGATE) and UFO sighting reports.
 **Do this at home, not in the room.** Follow **[PHASE0.md](PHASE0.md)**.
 Nothing in session 1 works without it.
 
-It offers two routes. **GitHub Codespaces** is the recommended one: click a
-button, get a container with the toolchain, the corpus and the embedding model
-already in it, and spend your ten minutes on the four API keys — which are the
-only part nobody can do for you. **Your own machine** works just as well and
-takes about twenty-five minutes, most of it installing `uv` and `cloudflared`.
+It runs in **GitHub Codespaces**: click a button and you get a container with
+the toolchain, the corpus and the embedding model already in it, so your ten
+minutes go on the four API keys — the only part nobody can do for you. All you
+need on your own machine is a browser.
 
 The last step prints a line like this:
 
@@ -38,22 +37,15 @@ even if something failed, because that is what the three days are for.
 
 ## Quick start
 
-In a **Codespace**, everything below the `git switch` is already done —
-[open a terminal](PHASE0.md#a-github-codespaces--recommended) and start there.
-
-On your own machine, all of these go into a **terminal**: your OS terminal, or
-the one built into your editor. [PHASE0.md](PHASE0.md) covers which one and how
-to open it. Run them from the repository root, the folder containing
-`pyproject.toml`.
+[PHASE0.md](PHASE0.md) walks through creating the Codespace and
+[opening a terminal](PHASE0.md#open-your-codespace) in it. The repository, the
+dependencies, the corpus and the embedding model arrive with the image, and
+`.env` is already there waiting for your keys, so what is left is two commands
+either side of filling it in:
 
 ```bash
-git clone https://github.com/LuchettiMauro/gsom-september-2026-workshop.git
-cd gsom-september-2026-workshop
 git switch -c mywork origin/main
-
-uv sync --extra serve
-cp .env.example .env        # then fill in your keys
-uv run python scripts/fetch_data.py
+# open .env in the editor and paste in your four keys
 uv run python scripts/check.py
 ```
 
@@ -76,12 +68,10 @@ Python files, and marimo serves them to your browser.
 uv run marimo edit --no-token
 ```
 
-It prints a URL and opens your browser at marimo's home page, which lists every
-notebook in the repository. Click `notebooks/01_chat_completions.py` to open it.
-
-In a Codespace, the browser is opened by the **Open in Browser** button in the
-notification at the bottom right; the **PORTS** tab, row *marimo*, globe icon,
-gets you there at any time afterwards.
+To open it, click **Open in Browser** in the notification that appears at the
+bottom right; the **PORTS** tab, row *marimo*, globe icon, gets you there at any
+time afterwards. You land on marimo's home page, which lists every notebook in
+the repository. Click `notebooks/01_chat_completions.py`.
 
 Keep `--no-token`. marimo otherwise protects the server with an access key that
 only appears in the printed URL, which the tab the Codespace opens for you does
@@ -90,9 +80,8 @@ and that is the protection that matters.
 
 That terminal is now **busy** — it belongs to marimo until you stop it. Do not
 type further commands into it. Open a second terminal for anything else
-(`git`, `uv run pytest`, and in session 2 the bot and the tunnel): in a
-Codespace or in VS Code, the **+** at the top right of the **TERMINAL** panel,
-or `` Ctrl+Shift+` ``. See
+(`git`, `uv run pytest`, and in session 2 the bot and the tunnel): the **+** at
+the top right of the **TERMINAL** panel, or `` Ctrl+Shift+` ``. See
 [*How do I open a second terminal?*](TROUBLESHOOTING.md#how-do-i-open-a-second-terminal).
 
 ### Picking it up again after a break

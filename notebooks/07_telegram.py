@@ -128,8 +128,7 @@ def _(mo):
     printing log lines, and typing a command into it does nothing. Leave it
     alone and open two new ones.
 
-    **In a Codespace, or in VS Code / Cursor on your own machine** — same
-    window, three routes to the same thing:
+    Three routes to the same thing, all in the Codespace window:
 
     - the **+** button at the top right of the panel holding the **TERMINAL**
       tab (a list appears on the right, one row per terminal; click a row to
@@ -142,14 +141,7 @@ def _(mo):
     puts two side by side in the same panel instead, which is worth doing here:
     the bot and the tunnel are both things you want to watch.
 
-    **In a plain OS terminal, with no editor:** open a second window, or a new
-    tab — `Cmd+T` on macOS, `Ctrl+Shift+T` on Linux and in Windows Terminal.
-
-    **Then check where each one landed.** In a Codespace a new terminal opens
-    at the repository root already. A new window on your own machine usually
-    opens in your home folder, so `cd` back to the folder holding
-    `pyproject.toml`. `ls pyproject.toml` answers the question in one line:
-    a filename means you are in the right place, an error means you are not.
+    Each one starts at the repository root, so there is nothing to `cd` to.
 
     Call the first new one **terminal 1** and the second **terminal 2**. Each
     command below runs in one of them and then *keeps running* — the process
@@ -332,8 +324,8 @@ def _(mo):
     1. run the `deleteWebhook` cell above,
     2. `Ctrl+C` the tunnel in terminal 2,
     3. `Ctrl+C` the bot in terminal 1,
-    4. and on Codespaces, stop the container — it bills you for staying awake,
-       not for the work it does.
+    4. and stop the Codespace — it bills you for staying awake, not for the
+       work it does.
 
     ## The version you will actually use
 

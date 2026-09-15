@@ -59,7 +59,8 @@ def check_uv() -> Result:
     return (
         "uv",
         version or "MISSING",
-        "" if version else "Install uv — see PHASE0.md, *Your own machine*.",
+        "" if version else "uv ships in the Codespace image — rebuild the container (F1, "
+        "Codespaces: Rebuild Container).",
     )
 
 
@@ -95,13 +96,10 @@ def check_serve() -> Result:
     return ("serve", OK, "")
 
 
-# Where the platform installers put the binary. A terminal opened before the
-# install does not see the PATH entry the installer added, so an attendee who
-# just ran `winget install` gets MISSING from an otherwise fine machine.
+# Where the .deb in .devcontainer/setup.sh puts the binary. A terminal opened
+# mid-build does not see it on PATH yet, and reporting MISSING on a container
+# that has it sends the student off installing something they already have.
 CLOUDFLARED_FALLBACKS = (
-    Path("C:/Program Files (x86)/cloudflared/cloudflared.exe"),
-    Path("C:/Program Files/cloudflared/cloudflared.exe"),
-    Path("/opt/homebrew/bin/cloudflared"),
     Path("/usr/local/bin/cloudflared"),
     Path("/usr/bin/cloudflared"),
 )
@@ -121,7 +119,8 @@ def check_cloudflared() -> Result:
         return (
             "cloudflared",
             "MISSING",
-            "Needed in session 2 — see PHASE0.md, *Your own machine*. Not fatal for session 1.",
+            "Needed in session 2, and it ships in the Codespace image — rebuild the "
+            "container (F1, Codespaces: Rebuild Container). Not fatal for session 1.",
         )
     return ("cloudflared", OK, "")
 

@@ -1,8 +1,7 @@
 # Phase 0 — setup, before session 1
 
-About 10 minutes in a Codespace, about 25 on your own machine. **Do it at
-home.** Session 1 is hands-on from the first minute and there is no time to
-install anything in the room.
+About 10 minutes, in a browser. **Do it at home.** Session 1 is hands-on from
+the first minute and there is no time to set anything up in the room.
 
 At the end you run one command and paste one line into an issue on this
 repository. That line tells the instructor whether you're ready, three days
@@ -12,18 +11,16 @@ Everything here is free. No credit card is required at any point.
 
 ---
 
-## Choose how you will work
+## Open your Codespace
 
-Two ways in. They differ only in how the toolchain gets onto a machine —
-from [*Get a Google AI Studio key*](#1-get-a-google-ai-studio-key) onwards the
-two paths are the same text, the same commands and the same repository.
+The workshop runs in a Codespace: a container on GitHub's machines, with a real
+terminal, a real editor and this repository already in it. Everything slow is
+already done — `uv`, `cloudflared`, the dependencies, the 42 documents, the
+60,000 sightings and the 80 MB embedding model are all baked into the image.
 
-### A. GitHub Codespaces — recommended
-
-A Codespace is a container running on GitHub's machines, with a real terminal,
-a real editor and this repository already in it. Everything slow is already
-done: `uv`, `cloudflared`, the dependencies, the 42 documents, the 60,000
-sightings and the 80 MB embedding model are all baked into the image.
+That is what makes this ten minutes rather than half an hour, and it is why
+nothing below depends on which machine or operating system you have. You need a
+browser and a GitHub account, and you install nothing.
 
 1. Sign in to [github.com](https://github.com) — a free personal account is
    enough. Create one if you don't have one.
@@ -70,7 +67,30 @@ sightings and the 80 MB embedding model are all baked into the image.
    Every one of these boxes works the same way for the rest of the workshop:
    copy, paste into the terminal, press Enter.
 
-Then skip to [*Get a Google AI Studio key*](#1-get-a-google-ai-studio-key).
+**Why that branch.** `git switch -c mywork origin/main` puts you on your own
+branch from the start, holding the whole repository: every module the nine
+notebooks use is there from day one, so no notebook ever asks you to switch
+branches mid-lesson.
+
+Stay on it. The `step-*` branches still exist, as checkpoints to fall back on
+if you break something, and they are regenerated and force-pushed between
+sessions — so anything you commit directly onto one is overwritten without
+warning.
+
+**Two things about that terminal.**
+
+*Every command in this workshop goes into one*, and a terminal in a Codespace
+opens at the repository root — the folder holding `pyproject.toml` — which is
+where all of them assume you are. Nothing to `cd` to, nothing to activate.
+
+*You will need two more of them in session 2*, running alongside the one marimo
+occupies: one for the bot, one for the tunnel. Notebook 07 walks through
+opening them.
+
+> **Do not type these into a Python REPL or a Jupyter cell.** Commands starting
+> with `uv`, `git`, `cd` or `curl` go to the shell. If you see
+> `SyntaxError: invalid syntax` on a line starting with `uv`, you typed a shell
+> command into Python.
 
 **Four things to know about a Codespace.**
 
@@ -97,99 +117,10 @@ public. Don't. marimo runs arbitrary Python, so a public marimo port is a
 public shell on your container. Session 2 gives the agent a public address a
 different way, through a tunnel, and that one is deliberate.
 
-### B. Your own machine
-
-Nothing wrong with this route — it is what you would do on a real project, and
-you end up understanding the toolchain rather than inheriting it. It costs
-about fifteen minutes more, all of it installing things.
-
-**Open a terminal.** Every command in this workshop is typed into one. Which
-one does not matter much, but pick one now and use the same one throughout.
-
-- **Windows** — use **PowerShell**, not the old `cmd` prompt. Press `Win`, type
-  `powershell`, press Enter.
-- **macOS** — press `Cmd+Space`, type `terminal`, press Enter.
-- **Linux** — `Ctrl+Alt+T` on most distributions.
-- **Or your editor's built-in one.** VS Code, PyCharm and Cursor all have one,
-  and it is the more comfortable option because the terminal and the files are
-  in the same window. VS Code / Cursor: `File → Open Folder` on the cloned
-  repo, then `` Ctrl+` ``. PyCharm: `Alt+F12`. On Windows, check the dropdown
-  in the terminal panel says `powershell` and not `Command Prompt`.
-
-Three things that matter regardless:
-
-1. **Your working directory must be the repository root** — the folder
-   containing `pyproject.toml`. Every command assumes it. Check with `pwd`.
-2. **"Close and reopen your terminal" means the whole window**, not a new tab
-   in the same one. Installers change `PATH`, and only a freshly started shell
-   reads it. In VS Code, close the panel with the bin icon and open a new one,
-   or restart the editor.
-3. **You will need two more terminals in session 2**, running alongside the
-   one marimo occupies — one for the bot, one for the tunnel. Notebook 07
-   walks through opening them.
-
-> **Do not type these into a Python REPL or a Jupyter cell.** Commands starting
-> with `uv`, `git`, `cd` or `curl` go to the shell. If you see
-> `SyntaxError: invalid syntax` on a line starting with `uv`, you typed a shell
-> command into Python.
-
-**Install `uv`.** It manages both Python and the project's dependencies, so you
-do **not** need to install Python yourself — whatever version you already have
-is irrelevant.
-
-Windows (PowerShell):
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-macOS / Linux:
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-Close and reopen your terminal, then check with `uv --version`.
-
-**Install `cloudflared`.** Needed in session 2, to give your agent a public
-address.
-
-- **Windows**: `winget install --id Cloudflare.cloudflared`
-- **macOS**: `brew install cloudflared`
-- **Linux**: see [Cloudflare's downloads page](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/)
-
-Close and reopen your terminal again — the installer adds `cloudflared` to
-`PATH`, and a terminal that was already open keeps the old one. Check with
-`cloudflared --version`.
-
-**Get the code, and the data.**
-
-```bash
-git clone https://github.com/LuchettiMauro/gsom-september-2026-workshop.git
-cd gsom-september-2026-workshop
-git switch -c mywork origin/main
-uv sync --extra serve
-uv run python scripts/fetch_data.py
-```
-
-`git switch -c mywork` matters: it puts you on your own branch from the start,
-holding the whole repository. Every module the nine notebooks use is there from
-day one, so no notebook ever asks you to switch branches mid-lesson.
-
-Stay on that branch. The `step-*` branches still exist, as checkpoints to fall
-back on if you break something, and they are regenerated and force-pushed
-between sessions — so anything you commit directly onto one is overwritten
-without warning.
-
-`--extra serve` matters too: it installs the web server and the Telegram
-interface that session 2 runs on. Leave it out and notebook 07 fails at import.
-
-`fetch_data.py` pulls 42 declassified documents and ~60,000 UFO sighting
-reports. About a minute.
-
 ---
 
-Everything from here is the same on both routes. The screenshots below are in
-Italian: both sites follow the language of your account, so your buttons may
-read differently, but they sit in the same places.
+The screenshots below are in Italian: both sites follow the language of your
+account, so your buttons may read differently, but they sit in the same places.
 
 ## 1. Get a Google AI Studio key
 
@@ -321,15 +252,8 @@ belongs in `.env`, which is git-ignored, and nowhere else.
 
 ## 4. Fill in your keys
 
-In a Codespace there is already a `.env` waiting for you: find it in the file
-list down the left side of the editor and click it to open, then skip the
-copying. On your own machine, make one first:
-
-```bash
-cp .env.example .env        # macOS / Linux
-copy .env.example .env      # Windows cmd
-Copy-Item .env.example .env # Windows PowerShell
-```
+There is already a `.env` waiting for you: find it in the file list down the
+left side of the editor and click it to open.
 
 Paste in the four values from steps [1](#1-get-a-google-ai-studio-key),
 [2](#2-get-a-langfuse-account) and [3](#3-get-a-telegram-bot-token). One arrow
@@ -355,10 +279,10 @@ in, and the two below it — `TELEGRAM_WEBHOOK_SECRET_TOKEN` and
 uv run python scripts/check.py
 ```
 
-This makes a real (tiny) call to Gemini, writes a real trace to Langfuse, and
-on your own machine downloads the embedding model — roughly 80 MB, which is
-exactly the sort of thing that should not happen 25 times over lecture-room
-wifi.
+This makes a real (tiny) call to Gemini and writes a real trace to Langfuse, so
+anything broken breaks here, at home, the way it would break in session 1 —
+rather than reporting that the files look fine. The embedding model it checks
+for is already in the image, so there is nothing to download.
 
 It prints something like:
 
@@ -388,17 +312,12 @@ Not required, but it removes the last surprise from the start of session 1.
 uv run marimo edit --no-token
 ```
 
-**In a Codespace**, a box appears at the bottom right saying an application on
-port 2718 is available: click **Open in Browser**. If you miss it or dismiss
-it, open the **PORTS** tab — it sits next to TERMINAL, above the panel — find
-the row labelled *marimo*, and click the globe icon in its Forwarded Address
-column.
+A box appears at the bottom right saying an application on port 2718 is
+available: click **Open in Browser**. If you miss it or dismiss it, open the
+**PORTS** tab — it sits next to TERMINAL, above the panel — find the row
+labelled *marimo*, and click the globe icon in its Forwarded Address column.
 
-**On your own machine**, the browser opens by itself. If it doesn't, the
-terminal prints a `http://localhost:2718` address; `Ctrl+click` it.
-
-Either way you land on marimo's home page, listing every notebook in the
-repository. Click `notebooks/01_chat_completions.py`. You do not need to run
+You land on marimo's home page, listing every notebook in the repository. Click `notebooks/01_chat_completions.py`. You do not need to run
 anything — just confirm it opens.
 
 `--no-token` matters. Without it marimo demands an access key that exists only
@@ -422,7 +341,7 @@ If you want to run it yourself, both require a payment method and a small
 top-up (around €5 each). Add the keys to `.env` and everything else works
 unchanged.
 
-One caution if you are on a Codespace: a key with billing attached is a
-different kind of thing from the free ones above. The Google, Langfuse and
-Telegram credentials can at worst cost you a quota; a card-backed key can cost
-you money. Keep those two on your own machine.
+One caution: a key with billing attached is a different kind of thing from the
+free ones above. The Google, Langfuse and Telegram credentials can at worst cost
+you a quota; a card-backed key can cost you money. Add it when you want to run
+notebook 01 yourself, and delete the line from `.env` again when you are done.
