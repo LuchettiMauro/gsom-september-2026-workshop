@@ -147,7 +147,8 @@ def main() -> int:
             )
         except FileNotFoundError:
             raise SystemExit(
-                "cloudflared is not installed — see PHASE0.md, *Your own machine*."
+                "cloudflared is not installed — it ships in the Codespace image, "
+                "so rebuild the container if it is missing."
             ) from None
         public_url = read_tunnel_url(tunnel)
 

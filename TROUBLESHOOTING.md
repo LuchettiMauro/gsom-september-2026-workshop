@@ -6,10 +6,11 @@ The failures that actually happen, roughly in the order they happen.
 
 ### "Which terminal am I supposed to type this in?"
 
-Any of them — your OS terminal or your editor's built-in one — as long as the
-working directory is the repository root, the folder holding `pyproject.toml`.
-[PHASE0.md](PHASE0.md) walks through opening one, on a Codespace and on
-each platform.
+The one in your Codespace: the panel along the bottom of the editor, opened
+with the **☰** button at the top left, then **View → Terminal**.
+[PHASE0.md](PHASE0.md#open-your-codespace) has it with a screenshot. Every
+terminal there starts at the repository root, the folder holding
+`pyproject.toml`, which is where the commands assume you are.
 
 Two rules that account for most of the confusion:
 
@@ -22,8 +23,7 @@ Two rules that account for most of the confusion:
 
 ### How do I open a second terminal?
 
-In a Codespace, and in VS Code or Cursor on your own machine, all three of
-these do it, in the same window:
+Three routes to the same thing, all in the Codespace window:
 
 - the **+** button at the top right of the panel holding the **TERMINAL** tab —
   the terminals you have open are listed on the right, click a row to switch;
@@ -34,12 +34,7 @@ The icon next to the **+** is *Split Terminal*, which puts two side by side in
 one panel instead of switching between them — handy in session 2, where you
 want to watch the bot and the tunnel at once.
 
-In a plain OS terminal: a new window, or a new tab with `Cmd+T` on macOS and
-`Ctrl+Shift+T` on Linux and in Windows Terminal.
-
-A new terminal in a Codespace starts at the repository root. A new window on
-your own machine starts in your home folder, so `cd` back to the folder holding
-`pyproject.toml` — `ls pyproject.toml` tells you which situation you are in.
+Each one starts at the repository root, so there is nothing to `cd` to.
 
 ---
 
@@ -82,10 +77,9 @@ If you have already started it without the flag, either stop it with `Ctrl+C`
 and start it again, or copy the whole URL from the terminal — the part after
 `?access_token=` is the key it is asking for.
 
-To open it: in a Codespace, click **Open in Browser** in the notification at
-the bottom right, or use the **PORTS** tab beside TERMINAL and click the globe
-icon on the *marimo* row. On your own machine the browser opens by itself,
-and the terminal prints a `http://localhost:2718` address you can `Ctrl+click`.
+To open it: click **Open in Browser** in the notification at the bottom right,
+or use the **PORTS** tab beside TERMINAL and click the globe icon on the
+*marimo* row.
 
 ---
 
@@ -168,15 +162,13 @@ with it, and `uv run python scripts/check.py` reports them as `serve=MISSING`.
 
 ---
 
-### `uv: command not found` after installing it
+### `uv: command not found`
 
-The installer adds `uv` to your PATH, but only for *new* terminals. Close the
-terminal and open a new one.
-
-On Windows, if PowerShell refuses to run the installer at all, it's the
-execution policy — use the exact command from
-[PHASE0.md](PHASE0.md#b-your-own-machine), which includes
-`-ExecutionPolicy ByPass`.
+`uv` is baked into the Codespace image, so this means the image did not finish
+building. Rebuild the container: `F1`, then **Codespaces: Rebuild Container**.
+If that does not fix it, delete the codespace from
+[github.com/codespaces](https://github.com/codespaces) and create a new one —
+you lose only `.env`, which is four lines of pasting.
 
 ---
 
@@ -184,10 +176,9 @@ execution policy — use the exact command from
 
 Three possibilities, in order of likelihood:
 
-1. You created `.env.example` instead of `.env`. The file must be called exactly
-   `.env`, in the repository root.
-2. Windows saved it as `.env.txt`. File Explorer hides extensions by default —
-   check with `dir` in the terminal, not in Explorer.
+1. You edited `.env.example` instead of `.env`. The two sit next to each other
+   in the file list and only `.env` is read.
+2. You did not save the file. `Ctrl+S`, or `Cmd+S` on a Mac.
 3. There are quotes or spaces around the value. It should read
    `GOOGLE_API_KEY=AIza...` with nothing else on the line.
 
