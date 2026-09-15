@@ -163,13 +163,21 @@ entirely — and you start the next one with another `uv run marimo edit
 | | `08_evals` | What's actually wrong with it, and how you'd measure that |
 | | `09_workflows` | Deterministic orchestration, when you don't want an agent deciding |
 
-Each notebook opens with a **Start here** block: one `git switch` onto the
-`step-NN` branch that carries the modules that notebook reads. That switch is
-how the code reaches your machine, so run it even when you are not behind — a
-notebook opened on the previous step will fail on its first import.
+Each notebook opens by naming the modules it reads. They are all on `mywork`
+already, so nothing has to be fetched and no notebook ever asks you to switch
+branches — an import that fails means you are sitting on a `step-*` branch
+rather than your own.
 
-If you fall behind or break something, the same command is the escape hatch:
-commit what you have, switch, and you are back in sync in ten seconds.
+Each one closes with a **Checkpoint** naming its reference state, so you can
+see what you ended up with against what was expected:
+
+```bash
+git diff origin/step-04 -- stargate/
+```
+
+That is also the escape hatch. If you break something beyond repair, commit
+what you have and `git switch -c mywork2 origin/step-04` puts you back on your
+feet at the start of the next notebook.
 
 ---
 
