@@ -172,7 +172,7 @@ entirely — and you start the next one with another `uv run marimo edit
 | **Session 2** | `06_teams` | A SQL agent over the sightings table, and a team that routes |
 | | `07_telegram` | The agent, on your phone |
 | | `08_evals` | What's actually wrong with it, and how you'd measure that |
-| **Take-home** | `09_workflows` | Deterministic orchestration, when you don't want an agent deciding |
+| | `09_workflows` | Deterministic orchestration, when you don't want an agent deciding |
 
 Each notebook opens with a **Start here** block: one `git switch` onto the
 `step-NN` branch that carries the modules that notebook reads. That switch is

@@ -471,7 +471,8 @@ def _(mo):
     git diff origin/step-08
     ```
 
-    Optional, at home: `notebooks/09_workflows.py`
+    Next: `notebooks/09_workflows.py` — the case for not using an agent
+    at all.
 
     To get there: go back to marimo's home page in your browser, shut
     **this** notebook down (**Running notebooks** → the round Shutdown
