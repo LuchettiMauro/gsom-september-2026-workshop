@@ -20,6 +20,29 @@ Two rules that account for most of the confusion:
 
 ---
 
+### How do I open a second terminal?
+
+In a Codespace, and in VS Code or Cursor on your own machine, all three of
+these do it, in the same window:
+
+- the **+** button at the top right of the panel holding the **TERMINAL** tab —
+  the terminals you have open are listed on the right, click a row to switch;
+- `` Ctrl+Shift+` ``;
+- the **☰** button at the top left, then **Terminal → New Terminal**.
+
+The icon next to the **+** is *Split Terminal*, which puts two side by side in
+one panel instead of switching between them — handy in session 2, where you
+want to watch the bot and the tunnel at once.
+
+In a plain OS terminal: a new window, or a new tab with `Cmd+T` on macOS and
+`Ctrl+Shift+T` on Linux and in Windows Terminal.
+
+A new terminal in a Codespace starts at the repository root. A new window on
+your own machine starts in your home folder, so `cd` back to the folder holding
+`pyproject.toml` — `ls pyproject.toml` tells you which situation you are in.
+
+---
+
 ### I restarted the Codespace and I'm not in `.venv` any more
 
 You do not need to be. Every command in this workshop starts with `uv run`,

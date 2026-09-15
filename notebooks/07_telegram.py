@@ -24,8 +24,10 @@ def _(mo):
     than containing one. A Telegram bot is an HTTP server, and a notebook cell
     that blocks forever is a notebook you have lost.
 
-    You will need three terminals. That is not a workaround — it is what
-    deploying this actually looks like.
+    Three things have to be running at the same time: the bot, the tunnel, and
+    this notebook. The notebook you already have, so what you need is **two
+    more terminals** alongside the one marimo is holding. That is not a
+    workaround — it is what deploying this actually looks like.
     """)
     return
 
@@ -119,11 +121,57 @@ def _(cfg):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    ## Opening the two terminals
+
+    Before anything else, get the terminals on screen. The one you started
+    marimo in is **busy**: it belongs to marimo until you stop it, it keeps
+    printing log lines, and typing a command into it does nothing. Leave it
+    alone and open two new ones.
+
+    **In a Codespace, or in VS Code / Cursor on your own machine** — same
+    window, three routes to the same thing:
+
+    - the **+** button at the top right of the panel holding the **TERMINAL**
+      tab (a list appears on the right, one row per terminal; click a row to
+      switch between them),
+    - the keyboard: `` Ctrl+Shift+` ``,
+    - the menu: the **☰** button at the top left, then
+      **Terminal → New Terminal**.
+
+    Click **+** twice and you have both. The *Split Terminal* icon next to it
+    puts two side by side in the same panel instead, which is worth doing here:
+    the bot and the tunnel are both things you want to watch.
+
+    **In a plain OS terminal, with no editor:** open a second window, or a new
+    tab — `Cmd+T` on macOS, `Ctrl+Shift+T` on Linux and in Windows Terminal.
+
+    **Then check where each one landed.** In a Codespace a new terminal opens
+    at the repository root already. A new window on your own machine usually
+    opens in your home folder, so `cd` back to the folder holding
+    `pyproject.toml`. `ls pyproject.toml` answers the question in one line:
+    a filename means you are in the right place, an error means you are not.
+
+    Call the first new one **terminal 1** and the second **terminal 2**. Each
+    command below runs in one of them and then *keeps running* — the process
+    holds that terminal for as long as the bot is live, exactly like marimo
+    holds its own. Do not wait for a prompt to come back.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     ## Terminal 1 — the bot
+
+    In the **first** new terminal:
 
     ```bash
     uv run python telegram_bot.py
     ```
+
+    It prints startup lines and then sits there. That is what success looks
+    like. Leave it running and switch to the other terminal.
 
     Open `telegram_bot.py` in your editor while it starts. It is about thirty
     lines: build the agent you already have, wrap it in `AgentOS`, attach the
@@ -131,11 +179,15 @@ def _(mo):
 
     ## Terminal 2 — the tunnel
 
+    In the **second** new terminal, with the bot still running in the first:
+
     ```bash
     cloudflared tunnel --url http://localhost:7777
     ```
 
-    It prints a URL like `https://something-random-here.trycloudflare.com`.
+    It prints a URL like `https://something-random-here.trycloudflare.com`,
+    inside a box a few lines down, and then also sits there. Leave this one
+    running too.
 
     **That URL changes every time you restart the tunnel**, which is the single
     most common thing to get wrong in this notebook. Copy it into the cell below.
@@ -153,9 +205,11 @@ def _():
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Terminal 3 — this notebook: register the webhook
+    ## Back here — register the webhook
 
-    One call. This is what tells Telegram where to deliver messages.
+    No third terminal: this one is a cell, in the browser tab you are reading,
+    served by the marimo you already had running. One call, and it is what
+    tells Telegram where to deliver messages.
     """)
     return
 
@@ -201,7 +255,12 @@ def _(mo):
     TELEGRAM_ALLOWED_CHAT_IDS=123456789
     ```
 
-    Restart terminal 1 and ask again. Now it answers you, and only you.
+    A running process keeps the settings it started with, so the bot has to be
+    restarted: click into terminal 1, press `Ctrl+C`, and run
+    `uv run python telegram_bot.py` again. The tunnel in terminal 2 stays up
+    and its URL does not change, so there is nothing to re-register.
+
+    Ask again. Now it answers you, and only you.
 
     ## If nothing happens
 
@@ -279,9 +338,9 @@ def _(mo):
     ## The version you will actually use
 
     You have now seen the three pieces separately, which was the point. For the
-    days between the two sessions, one command does all of it: generates the
-    secret, waits for the bot, reads the tunnel URL, registers the webhook, and
-    deletes it again on `Ctrl+C`.
+    days between the two sessions, one command in one terminal does all of it:
+    generates the secret, starts both processes, reads the tunnel URL,
+    registers the webhook, and deletes it again on `Ctrl+C`.
 
     ```bash
     uv run python scripts/serve_bot.py

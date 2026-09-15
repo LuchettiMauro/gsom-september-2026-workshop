@@ -89,8 +89,11 @@ not carry — the result is a login box nobody can fill in. Port 2718 is private
 and that is the protection that matters.
 
 That terminal is now **busy** — it belongs to marimo until you stop it. Do not
-type further commands into it. Open a second terminal window or tab for
-anything else (`git`, `uv run pytest`, and in session 2 the tunnel).
+type further commands into it. Open a second terminal for anything else
+(`git`, `uv run pytest`, and in session 2 the bot and the tunnel): in a
+Codespace or in VS Code, the **+** at the top right of the **TERMINAL** panel,
+or `` Ctrl+Shift+` ``. See
+[*How do I open a second terminal?*](TROUBLESHOOTING.md#how-do-i-open-a-second-terminal).
 
 ### Picking it up again after a break
 

@@ -124,8 +124,9 @@ Three things that matter regardless:
    in the same one. Installers change `PATH`, and only a freshly started shell
    reads it. In VS Code, close the panel with the bin icon and open a new one,
    or restart the editor.
-3. **You will need a second terminal in session 2**, running alongside the
-   first — one for the tunnel, one for the bot.
+3. **You will need two more terminals in session 2**, running alongside the
+   one marimo occupies — one for the bot, one for the tunnel. Notebook 07
+   walks through opening them.
 
 > **Do not type these into a Python REPL or a Jupyter cell.** Commands starting
 > with `uv`, `git`, `cd` or `curl` go to the shell. If you see
