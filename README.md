@@ -213,14 +213,6 @@ actually happen, in the order they actually happen.
 
 ---
 
-## Why it is built this way
-
-The decisions that would otherwise be invisible — why Codespaces rather than
-Colab, why a tunnel rather than a forwarded port, why the bot answers only you
-— are recorded in [docs/adr/](docs/adr/).
-
----
-
 ## Licence
 
 Code is MIT. Prose and notebooks are CC-BY-4.0. The document corpus is US

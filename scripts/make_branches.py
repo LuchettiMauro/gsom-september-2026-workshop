@@ -42,7 +42,6 @@ SOURCE_BRANCH = "main"
 COMMON = [
     ".devcontainer/",
     ".github/",
-    "docs/",
     ".gitignore",
     ".python-version",
     ".env.example",
