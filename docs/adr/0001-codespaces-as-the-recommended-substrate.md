@@ -1,5 +1,8 @@
 # GitHub Codespaces is the recommended way to follow the workshop
 
+> **Superseded by [ADR 0009](0009-codespaces-is-the-only-route.md).** The local
+> route this ADR kept has been removed; Codespaces is now the only one.
+
 Phase 0 was 11 steps and 25 minutes, and most of that was installing a
 toolchain — the part most likely to defeat someone on a locked-down laptop
 before the course has even started. A Codespace is now the recommended route
