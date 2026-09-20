@@ -52,6 +52,90 @@ def _(mo):
     Hold on to this. It is going to show up as a failure category in the next
     notebook, and it is the most common one in the room.
 
+    ## Don't take that on trust
+
+    You have just been *told* what this agent can and cannot reach. Read it off
+    the object instead. An agent is three things: a model, a system prompt, and
+    a list of tools. All three are inspectable before you spend a single call.
+    """)
+    return
+
+
+@app.cell
+def _():
+    from agno.session.agent import AgentSession
+    from agno.session.team import TeamSession
+
+    def tool_names(agent):
+        """Every tool the model is offered, including the ones Agno adds itself."""
+        names = [
+            getattr(t, "__name__", None) or getattr(t, "name", None) or repr(t)
+            for t in (agent.tools or [])
+        ]
+        if getattr(agent, "members", None) is not None:
+            names.append(
+                "delegate_task_to_members"
+                if agent.delegate_to_all_members
+                else "delegate_task_to_member"
+            )
+        if getattr(agent, "knowledge", None) is not None and agent.search_knowledge:
+            names.append("search_knowledge_base")
+        return names
+
+    def roster(*agents):
+        """Name, instructions and tools for each agent, without calling anything."""
+        print("Agents available:", ", ".join(a.name for a in agents))
+        for a in agents:
+            print(f"\n{a.name}")
+            for line in a.instructions or []:
+                print(f"    · {line}")
+            print(f"  tools: {', '.join(tool_names(a)) or 'none'}")
+
+    def system_prompt(agent):
+        """The system message Agno will actually send, assembled without a call."""
+        session = (
+            TeamSession(session_id="inspect", team_id=agent.id)
+            if getattr(agent, "members", None) is not None
+            else AgentSession(session_id="inspect", agent_id=agent.id)
+        )
+        message = agent.get_system_message(session=session)
+        return message.content if message else ""
+
+    return roster, system_prompt
+
+
+@app.cell
+def _(documents_only, roster):
+    roster(documents_only)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    One tool, and it searches documents. There is no path from here to the
+    sightings table, so the number you just read was invented.
+
+    `instructions` is the part *we* wrote. What the model actually receives is
+    a little more than that, because Agno assembles the rest:
+    """)
+    return
+
+
+@app.cell
+def _(documents_only, system_prompt):
+    print(system_prompt(documents_only))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Note the `<knowledge_base>` block at the bottom. Nobody wrote it: Agno adds
+    it because `search_knowledge=True`, and it is the reason the agent knows the
+    tool exists at all. This is the whole prompt, and it is worth re-reading
+    whenever an agent behaves in a way your instructions do not explain.
+
     ## The data was never one shape
 
     | | Shape | Belongs in |
@@ -106,8 +190,29 @@ def _():
     from stargate.agents import analyst
 
     sql_agent = analyst()
-    sql_agent.print_response("How many sightings were reported in 1952?")
     return (sql_agent,)
+
+
+@app.cell
+def _(roster, sql_agent):
+    roster(sql_agent)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Two tools this time, and neither of them can reach a document. The
+    read-only rule is stated in the instructions *and* enforced in
+    `SightingsDB` — instructions alone are a request, not a guarantee.
+    """)
+    return
+
+
+@app.cell
+def _(sql_agent):
+    sql_agent.print_response("How many sightings were reported in 1952?")
+    return
 
 
 @app.cell
@@ -139,6 +244,43 @@ def _(knowledge):
 
     team = research_team(knowledge)
     return (team,)
+
+
+@app.cell
+def _(roster, team):
+    roster(team, *team.members)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Three agents now, and the router's only tool is `delegate_task_to_member`.
+    It cannot query, it cannot search, it can only pick someone. That is why
+    *"Never answer a numeric question yourself"* is in its instructions: it is
+    the one failure mode its tools do not already prevent.
+
+    Now read what the router is actually sent:
+    """)
+    return
+
+
+@app.cell
+def _(system_prompt, team):
+    print(system_prompt(team))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Look at the `<team_members>` block: two names, and nothing else. Agno passes
+    no description of what either member does, so every routing decision the
+    model makes rests on the strings *"Archivist"* and *"Analyst"* plus the five
+    lines we wrote. That is a thin basis for a decision, and it is worth
+    remembering when the router sends a question to the wrong specialist.
+    """)
+    return
 
 
 @app.cell
