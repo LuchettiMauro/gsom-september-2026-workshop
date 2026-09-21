@@ -604,9 +604,25 @@ def _(mo):
 def _(dataset, langfuse_sync):
     from stargate.evaluators.deterministic import looks_like_a_counting_question
 
-    counting = [i for i in dataset.items if looks_like_a_counting_question(i.input["question"])]
+    # How many counting questions to put through each team run. One is enough
+    # to show the mechanism and is what the free tier affords: a team question
+    # is eight or nine model calls against a limit of fifteen a minute, so two
+    # runs over one item is already most of a minute's quota. Raise it when you
+    # have the budget, and read the warning below before believing the number.
+    ROUTING_SAMPLE = 1
+
+    # Sorted by id, so a slice is the same slice for everyone in the room and
+    # two people comparing notes are comparing the same question. The order
+    # the API returns items in is not the order they were written in.
+    _all_counting = sorted(
+        (i for i in dataset.items if looks_like_a_counting_question(i.input["question"])),
+        key=lambda i: i.id,
+    )
+    counting = _all_counting[:ROUTING_SAMPLE]
+
+    print(f"{len(_all_counting)} counting questions in the testset, using {len(counting)}:")
     for _i in counting:
-        print("-", _i.input["question"])
+        print("  -", _i.input["question"])
     return counting, looks_like_a_counting_question
 
 
@@ -719,6 +735,21 @@ def _(mo):
     number reachable, one sentence made it likely.** Reporting only the second
     would be the usual prompt-engineering story, and it would be the smaller
     half of the truth.
+
+    **And now the uncomfortable part.** At `ROUTING_SAMPLE = 1`, `check_routing`
+    is either 0.0 or 1.0. That is one observation. You have watched a mechanism
+    work, which is worth doing, and you have not measured how often it works,
+    which is a different claim entirely.
+
+    This is the same trap as step 5, arriving from the other direction: there
+    the TPR came out of five or six real failures, here the whole column comes
+    out of one. **An anecdote with a decimal point** either way. The difference
+    is that you now know which one you are holding, and a run whose `pass_rate`
+    comment reads *"3 applicable checks across 1 items"* says so on its face.
+
+    Raise `ROUTING_SAMPLE` to all three when the quota allows, and treat even
+    three as a demonstration. A real routing metric wants the questions your
+    own week of traces produced, and there are more than three of those.
 
     If the two team runs come out identical, that is a result too. It means the
     router was already delegating and the sentence is buying you nothing, which
