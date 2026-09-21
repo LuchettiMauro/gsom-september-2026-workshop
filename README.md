@@ -159,9 +159,9 @@ entirely — and you start the next one with another `uv run marimo edit
 | | `04_agno_agent` | The same thing in six lines, with tracing |
 | | `05_knowledge` | Vector search over the declassified corpus |
 | **Session 2** | `06_teams` | A SQL agent over the sightings table, and a team that routes |
-| | `07_telegram` | The agent, on your phone |
+| | `07_workflows` | Deterministic orchestration, when you don't want an agent deciding |
 | | `08_evals` | What's actually wrong with it, and how you'd measure that |
-| | `09_workflows` | Deterministic orchestration, when you don't want an agent deciding |
+| | `09_telegram` | The agent, and then the team, on your phone |
 
 Each notebook opens by naming the modules it reads. They are all on `mywork`
 already, so nothing has to be fetched and no notebook ever asks you to switch

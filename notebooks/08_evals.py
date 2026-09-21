@@ -465,21 +465,21 @@ def _(mo):
 
     ### Checkpoint
 
-    Reference state: **`step-08`** — the complete repository.
+    Reference state: **`step-08`**
 
     ```
-    git diff origin/step-08
+    git diff origin/step-08 -- stargate/
     ```
 
-    Next: `notebooks/09_workflows.py` — the case for not using an agent
-    at all.
+    Next: `notebooks/09_telegram.py` — putting the whole thing in front of
+    real users.
 
     To get there: go back to marimo's home page in your browser, shut
     **this** notebook down (**Running notebooks** → the round Shutdown
     button on its row), then click the next one in the list.
 
     Launched marimo on this single file instead? `Ctrl+C` in its terminal,
-    then `uv run marimo edit --no-token notebooks/09_workflows.py`.
+    then `uv run marimo edit --no-token notebooks/09_telegram.py`.
 
     See *Running the notebooks* in the README if this is the first time.
     """)

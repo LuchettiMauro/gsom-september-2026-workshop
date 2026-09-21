@@ -1,10 +1,10 @@
-"""The agent, on Telegram. Notebook 07 drives this.
+"""The agent, on Telegram. Notebook 09 drives this.
 
 Run it with three terminals open:
 
     1.  uv run python telegram_bot.py
     2.  cloudflared tunnel --url http://localhost:7777
-    3.  the setWebhook cell in notebooks/07_telegram.py
+    3.  the setWebhook cell in notebooks/09_telegram.py
 
 Once you have seen the three pieces separately, one command does all of them,
 and cleans up after itself when you stop it:
@@ -15,6 +15,12 @@ This is a script rather than a notebook cell on purpose. It is a long-running
 HTTP server, and a notebook cell that blocks forever is a notebook you have
 lost. The transition is the lesson: you explore in a notebook, you deploy a
 process.
+
+What answers is either the archivist from notebook 04 or the team from
+notebook 06, chosen with STARGATE_BRAIN (`archivist`, the default, or `team`).
+The archivist is the default because it costs two or three model calls per
+message where the team costs eight or nine, and a free Gemini key allows
+fifteen a minute.
 
 Two things guard the door, because a tunnel puts this on the public internet:
 
@@ -29,6 +35,7 @@ Langfuse project with conversations you did not have.
 
 from __future__ import annotations
 
+import os
 import sys
 from typing import Any
 
@@ -36,9 +43,12 @@ from stargate.agents import archivist
 from stargate.config import settings
 from stargate.knowledge import knowledge_from_existing
 from stargate.observability import enable_tracing
+from stargate.teams import research_team
 
 PORT = 7777
 WEBHOOK_PATH = "/telegram/webhook"
+BRAIN_ENV = "STARGATE_BRAIN"
+BRAINS = ("archivist", "team")
 
 
 def _chat_id_of(update: dict[str, Any]) -> int | None:
@@ -83,10 +93,25 @@ def add_chat_allowlist(app: Any) -> None:
         return await call_next(request)
 
 
+def build_brain(name: str | None = None, knowledge: Any = None) -> Any:
+    """The agent or team that will answer, by name.
+
+    An environment variable rather than an argument, because nothing calls this
+    directly: the notebook runs `python telegram_bot.py`, and `serve_bot.py`
+    starts `uvicorn telegram_bot:app` in a subprocess. Both reach the same
+    switch through the environment.
+    """
+    name = (name or os.environ.get(BRAIN_ENV) or "archivist").strip().lower()
+    if name not in BRAINS:
+        raise SystemExit(f"{BRAIN_ENV}={name!r} is not one of {BRAINS}.")
+    return research_team(knowledge) if name == "team" else archivist(knowledge)
+
+
 def build_app() -> object:
-    """An AgentOS app exposing the archivist over Telegram."""
+    """An AgentOS app exposing the archivist, or the team, over Telegram."""
     from agno.os import AgentOS
     from agno.os.interfaces.telegram import Telegram
+    from agno.team import Team
 
     cfg = settings()
     if not cfg.telegram_token:
@@ -119,8 +144,15 @@ def build_app() -> object:
         print("Run notebook 05, or stargate.knowledge.restore_prebuilt_index().")
         knowledge = None
 
-    agent = archivist(knowledge)
-    agent_os = AgentOS(agents=[agent], interfaces=[Telegram(agent=agent)])
+    brain = build_brain(knowledge=knowledge)
+    # A Team and an Agent go into different slots on both AgentOS and the
+    # Telegram interface, so the one switch above decides two pairs of
+    # arguments.
+    if isinstance(brain, Team):
+        agent_os = AgentOS(teams=[brain], interfaces=[Telegram(team=brain)])
+    else:
+        agent_os = AgentOS(agents=[brain], interfaces=[Telegram(agent=brain)])
+    print(f"Answering with: {brain.name}")
     app = agent_os.get_app()
     add_chat_allowlist(app)
     return app
@@ -135,7 +167,7 @@ def main() -> int:
     print(f"Starting on http://localhost:{PORT}")
     print("Now, in a second terminal:")
     print(f"    cloudflared tunnel --url http://localhost:{PORT}")
-    print("Then run the setWebhook cell in notebook 07 with the URL it prints.\n")
+    print("Then run the setWebhook cell in notebook 09 with the URL it prints.\n")
     uvicorn.run(build_app(), host="0.0.0.0", port=PORT)
     return 0
 

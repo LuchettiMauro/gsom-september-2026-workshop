@@ -54,7 +54,7 @@ uv run marimo edit --no-token
 ```
 
 Same for session 2: the bot and the tunnel are both gone, and the tunnel hands
-out a new address each time, so notebook 07's webhook has to be pointed at the
+out a new address each time, so notebook 09's webhook has to be pointed at the
 new one.
 
 ---
@@ -293,7 +293,7 @@ restore_prebuilt_index()
 - Some networks block outbound tunnels. Tether to your phone and try again —
   this is the single most likely cause on a university network.
 
-Run the `getWebhookInfo` cell in notebook 07: `last_error_message` says which
+Run the `getWebhookInfo` cell in notebook 09: `last_error_message` says which
 of these it is.
 
 ---

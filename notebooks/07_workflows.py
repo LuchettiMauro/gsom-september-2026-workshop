@@ -7,10 +7,10 @@ app = marimo.App(width="medium")
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    # 09 · When you don't want an agent deciding
+    # 07 · When you don't want an agent deciding
 
-    **Uses the `stargate/evaluators/` package.** It is already in your
-    repository: nothing to fetch, nothing to switch.
+    **This notebook uses `stargate/sightings.py` and `stargate/knowledge.py`.**
+    They are already in your repository: nothing to fetch, nothing to switch.
 
     If an import fails, you are sitting on a `step-*` branch rather than your
     own — see *cannot import name* in TROUBLESHOOTING.md.
@@ -188,18 +188,46 @@ def _(mo):
     the space of possible requests is too large to enumerate.
 
     Reach for a **team** when the work splits across genuinely different
-    capabilities — as it did in notebook 06, where the corpus really was two
-    shapes.
+    capabilities — as it did in the notebook before this one, where the corpus
+    really was two shapes.
 
-    And whichever you pick, the thing from notebook 08 still applies: you do not
-    know whether it works until you have looked at a hundred of its outputs and
-    written down what was wrong.
+    You now have all three shapes in front of you, which is the point of taking
+    them in this order: the same briefing question, answered by one agent, by a
+    team, and by four lines of Python. The differences between them are
+    architectural choices you make deliberately, and the next notebook is about
+    the only thing that tells you whether you chose well.
+
+    Because whichever you pick, none of it tells you the thing that matters: you
+    do not know whether it works until you have looked at a hundred of its
+    outputs and written down what was wrong.
 
     ---
 
-    That is the end of the material. The repository is yours — the licence is
-    permissive, the corpus is public domain, and the agent is a first draft that
-    you now know how to measure.
+    ### Checkpoint
+
+    Reference state: **`step-07`**
+
+    Nothing new lands in `stargate/` here: a workflow is control flow you write
+    in the notebook, which is rather the point. `step-07` is `step-06` plus this
+    notebook, so the diff is empty and that is the confirmation:
+
+    ```
+    git diff origin/step-07 -- stargate/
+    ```
+
+    Broke something beyond repair? `git switch -c mywork2 origin/step-07` puts
+    you back on your feet here.
+
+    Next: `notebooks/08_evals.py` — the part that matters.
+
+    To get there: go back to marimo's home page in your browser, shut
+    **this** notebook down (**Running notebooks** → the round Shutdown
+    button on its row), then click the next one in the list.
+
+    Launched marimo on this single file instead? `Ctrl+C` in its terminal,
+    then `uv run marimo edit --no-token notebooks/08_evals.py`.
+
+    See *Running the notebooks* in the README if this is the first time.
     """)
     return
 

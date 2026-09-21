@@ -63,6 +63,8 @@ COMMON = [
 ]
 
 # step -> the modules (and their tests) that exist by the end of that notebook.
+# step-07 adds nothing to step-06 on purpose: notebook 07 writes its workflow
+# in the notebook rather than in the package.
 STEPS: list[tuple[str, str, list[str]]] = [
     ("step-00", "Starting point: setup complete, nothing built yet", []),
     (
@@ -148,7 +150,7 @@ STEPS: list[tuple[str, str, list[str]]] = [
     ),
     (
         "step-07",
-        "After notebook 07 — the agent, on Telegram",
+        "After notebook 07 — workflows, where you write the control flow",
         [
             "stargate/providers.py",
             "stargate/tools.py",
@@ -159,18 +161,39 @@ STEPS: list[tuple[str, str, list[str]]] = [
             "stargate/chunking.py",
             "stargate/knowledge.py",
             "stargate/teams.py",
-            "telegram_bot.py",
-            "scripts/serve_bot.py",
             "tests/test_tools.py",
             "tests/test_sightings.py",
             "tests/test_loop.py",
             "tests/test_chunking.py",
-            "tests/test_telegram_guard.py",
         ],
     ),
     (
         "step-08",
-        "After notebook 08 — evaluation. The complete repository.",
+        "After notebook 08 — evaluation",
+        [
+            "stargate/providers.py",
+            "stargate/tools.py",
+            "stargate/sightings.py",
+            "stargate/loop.py",
+            "stargate/observability.py",
+            "stargate/agents.py",
+            "stargate/chunking.py",
+            "stargate/knowledge.py",
+            "stargate/teams.py",
+            "stargate/evaluators/",
+            "scripts/seed_traces.py",
+            "tests/test_tools.py",
+            "tests/test_sightings.py",
+            "tests/test_loop.py",
+            "tests/test_chunking.py",
+            "tests/test_deterministic.py",
+            "tests/test_judge.py",
+            "tests/test_alignment.py",
+        ],
+    ),
+    (
+        "step-09",
+        "After notebook 09 — the agent on Telegram. The complete repository.",
         [
             "stargate/providers.py",
             "stargate/tools.py",

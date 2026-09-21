@@ -337,14 +337,15 @@ def _(mo):
     git diff origin/step-06 -- stargate/
     ```
 
-    Next: `notebooks/07_telegram.py`
+    Next: `notebooks/07_workflows.py` — the case for not using an agent
+    at all.
 
     To get there: go back to marimo's home page in your browser, shut
     **this** notebook down (**Running notebooks** → the round Shutdown
     button on its row), then click the next one in the list.
 
     Launched marimo on this single file instead? `Ctrl+C` in its terminal,
-    then `uv run marimo edit --no-token notebooks/07_telegram.py`.
+    then `uv run marimo edit --no-token notebooks/07_workflows.py`.
 
     See *Running the notebooks* in the README if this is the first time.
     """)

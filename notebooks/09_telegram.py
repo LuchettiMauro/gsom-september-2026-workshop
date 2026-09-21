@@ -7,7 +7,7 @@ app = marimo.App(width="medium")
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    # 07 · The agent, on your phone
+    # 09 · The agent, on your phone
 
     **This notebook uses `telegram_bot.py`.** It is already in your
     repository: nothing to fetch, nothing to switch.
@@ -98,8 +98,8 @@ def _(mo):
 
     `TELEGRAM_ALLOWED_CHAT_IDS` is the list of chats the agent will reply to.
     Bot usernames are searchable inside Telegram: without this, a stranger can
-    find yours, spend your Gemini quota, and land in the traces you are
-    collecting for session 2. You fill it in a few cells from here.
+    find yours, spend your Gemini quota, and pollute your traces. You fill it
+    in a few cells from here.
 
     Run the cell below, then put the line it prints into `.env`.
     """)
@@ -329,10 +329,10 @@ def _(mo):
 
     ## The version you will actually use
 
-    You have now seen the three pieces separately, which was the point. For the
-    days between the two sessions, one command in one terminal does all of it:
-    generates the secret, starts both processes, reads the tunnel URL,
-    registers the webhook, and deletes it again on `Ctrl+C`.
+    You have now seen the three pieces separately, which was the point. On the
+    days you just want to ask your agent something, one command in one terminal
+    does all of it: generates the secret, starts both processes, reads the
+    tunnel URL, registers the webhook, and deletes it again on `Ctrl+C`.
 
     ```bash
     uv run python scripts/serve_bot.py
@@ -341,22 +341,54 @@ def _(mo):
     Read it before you trust it. `scripts/serve_bot.py` is about a hundred
     lines and does nothing this notebook has not already done by hand.
 
+    ## Now put the whole thing behind it
+
+    What has been answering you is the archivist: one agent, one knowledge base,
+    no way to reach the sightings table. Everything else you built in this
+    session is still sitting in the repository, unused by the bot.
+
+    `telegram_bot.py` picks what answers from one environment variable, so
+    swapping in the notebook 06 team is a flag:
+
+    ```bash
+    uv run python scripts/serve_bot.py --team
+    ```
+
+    The console tells you which one you got (`Answering with: Research Team`).
+    Now ask it the two questions that separated the specialists in notebook 06,
+    from your phone:
+
+    - *How many sightings were reported in 1952?* — the Analyst writes SQL
+    - *What did the remote viewers claim to see on Mars?* — the Archivist searches
+
+    Then open the trace. The routing decision you read in a notebook cell last
+    time is the same one happening now, on a message you sent from a bus.
+
+    **The archivist is the default on purpose.** A team question costs eight or
+    nine model calls against the two or three an agent spends, and a free Gemini
+    key allows fifteen a minute. The cheapest thing that answers your question is
+    the right default, and the flag is there for when it is not.
+
+    A workflow would go behind the same interface the same way. Agno's Telegram
+    interface takes `agent=`, `team=` or `workflow=`, which is the honest summary
+    of the last three notebooks: the delivery surface does not care which of the
+    three you chose, and choosing well is entirely on you.
+
     ---
 
     ### Checkpoint
 
-    Reference state: **`step-07`**
+    Reference state: **`step-09`** — the complete repository.
 
-    Next: `notebooks/08_evals.py` — the part that matters.
+    ```
+    git diff origin/step-09
+    ```
 
-    To get there: go back to marimo's home page in your browser, shut
-    **this** notebook down (**Running notebooks** → the round Shutdown
-    button on its row), then click the next one in the list.
+    ---
 
-    Launched marimo on this single file instead? `Ctrl+C` in its terminal,
-    then `uv run marimo edit --no-token notebooks/08_evals.py`.
-
-    See *Running the notebooks* in the README if this is the first time.
+    That is the end of the material. The repository is yours — the licence is
+    permissive, the corpus is public domain, and the agent is a first draft that
+    you now know how to measure.
     """)
     return
 

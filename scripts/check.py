@@ -81,7 +81,7 @@ def check_serve() -> Result:
     """The extra that session 2 runs on.
 
     Agno keeps its Telegram interface behind `agno[telegram]`, and a missing
-    piece here does not show up until notebook 07 fails at import — in the
+    piece here does not show up until notebook 09 fails at import — in the
     room, halfway through the second session.
     """
     missing = [

@@ -44,7 +44,7 @@ providers = [
     "openai>=1.60",
     "anthropic>=0.45",
 ]
-# Needed for notebook 07 (Telegram) only.
+# Needed for notebook 09 (Telegram) only.
 serve = [
     "agno[os]>=2.0",
     # the Telegram interface lives behind its own extra, which pulls

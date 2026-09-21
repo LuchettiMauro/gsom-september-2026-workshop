@@ -2,7 +2,7 @@
 
     uv run python scripts/serve_bot.py
 
-Notebook 07 walks you through the three pieces separately, and that is the
+Notebook 09 walks you through the three pieces separately, and that is the
 part worth understanding: a process, a tunnel that gives it a public address,
 and a webhook registration that points Telegram at it. This script is what you
 write *after* you have understood them — the thing you actually run on the
@@ -16,11 +16,16 @@ It does four things the manual route makes you do by hand:
     deletes the webhook on the way out, so nothing is left pointing at a
       tunnel that no longer exists
 
+By default the archivist answers. `--team` puts the notebook 06 team behind
+the bot instead, which routes between the documents and the sightings table
+and costs about four times as many model calls per message.
+
 Stop it with Ctrl+C.
 """
 
 from __future__ import annotations
 
+import argparse
 import os
 import re
 import secrets
@@ -48,7 +53,7 @@ def ensure_secret() -> str:
 
     Agno rejects every update that is not signed with this, so it is not
     optional — and it has to be the same string here and in `.env`, or the
-    manual route in notebook 07 stops working the moment this script has run.
+    manual route in notebook 09 stops working the moment this script has run.
     """
     existing = settings().telegram_webhook_secret
     if existing:
@@ -108,6 +113,14 @@ def read_tunnel_url(process: subprocess.Popen[str], timeout: float = 60.0) -> st
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--team",
+        action="store_true",
+        help="answer with the notebook 06 team instead of the archivist",
+    )
+    args = parser.parse_args()
+
     cfg = settings()
     if not cfg.telegram_token:
         raise SystemExit("TELEGRAM_TOKEN is not set — see PHASE0.md, *Get a Telegram bot token*.")
@@ -122,6 +135,8 @@ def main() -> int:
     tunnel: subprocess.Popen[str] | None = None
     try:
         print(f"Starting the bot on port {PORT} ...")
+        # uvicorn imports `telegram_bot` in a subprocess, so the choice of brain
+        # travels in the environment rather than as an argument.
         bot = subprocess.Popen(
             [
                 sys.executable,
@@ -134,6 +149,7 @@ def main() -> int:
                 str(PORT),
             ],
             cwd=REPO_ROOT,
+            env={**os.environ, "STARGATE_BRAIN": "team" if args.team else "archivist"},
         )
         wait_until_listening(PORT)
 
