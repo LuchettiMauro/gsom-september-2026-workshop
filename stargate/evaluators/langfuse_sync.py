@@ -99,6 +99,50 @@ def tool_names(run_output: Any) -> list[str]:
     return names
 
 
+def answer_with(brain: Any, question: str) -> dict[str, Any]:
+    """Ask an agent or a team, and say plainly when the run did not complete.
+
+    Two things make this more than `brain.run(question)`.
+
+    Agno catches a rate limit *inside* the run and hands back a degraded
+    RunOutput rather than raising, so `stargate.providers.with_backoff` never
+    sees an exception to retry. The signal is `status`, not an error, so that
+    is what gets retried here.
+
+    And when the retries run out the result carries `error` instead of an
+    empty answer. A run that never happened must not be scored: a counting
+    question whose agent was rate limited would otherwise be filed as a
+    routing failure, which turns somebody else's quota into your agent's
+    quality problem. That is the same distinction the `of` column makes, in
+    the one place where getting it wrong is most tempting.
+    """
+    import time
+
+    from agno.run.base import RunStatus
+
+    from stargate.providers import RETRY_DELAYS
+
+    status: Any = None
+    for delay in (*RETRY_DELAYS, None):
+        output = brain.run(question)
+        status = getattr(output, "status", None)
+        if status is None or status == RunStatus.completed:
+            return {
+                "answer": output.content or "",
+                "tool_calls": tool_names(output),
+                # Empty on purpose: the ids in an answer are the ones it cited,
+                # and scoring those as retrieved would let a confident citation
+                # pass a retrieval check.
+                "retrieved_ids": [],
+            }
+        if delay is None:
+            break
+        print(f"  run came back {status}; waiting {delay}s and asking again")
+        time.sleep(delay)
+
+    return {"answer": "", "tool_calls": [], "error": f"run status: {status}"}
+
+
 # --- turning a task's output back into something the checks understand -----
 
 
@@ -157,6 +201,13 @@ def deterministic_evaluator(
     the notebook, enforced here so the dashboard cannot quietly lose it.
     """
     from langfuse.experiment import Evaluation
+
+    # A run that never completed gets no scores at all. See `answer_with`: a
+    # rate-limited item scored zero is a quota problem recorded as a quality
+    # problem, and it moves the run's average by exactly as much as a real
+    # failure would.
+    if isinstance(output, dict) and output.get("error"):
+        return []
 
     trace = trace_from_experiment(
         input=input, output=output, expected_output=expected_output, metadata=metadata

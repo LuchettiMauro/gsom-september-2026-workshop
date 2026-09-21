@@ -615,14 +615,37 @@ def _(mo):
     mo.md(r"""
     Three runs over those three items, one architecture and two prompts.
 
-    Note `tool_names` in the task below, and read its docstring. A team's own
-    tool list says `delegate_task_to_member` and nothing else — the SQL call
-    happened one level down, inside the member the router picked. An evaluator
-    that reads only the top level reports that a team which routed perfectly
-    never touched the database.
+    The task below is one call to `answer_with`. Read its source, because it
+    is two non-obvious things in eight lines.
+
+    The first is `tool_names`. A team's own tool list says
+    `delegate_task_to_member` and nothing else — the SQL call happened one
+    level down, inside the member the router picked. An evaluator that reads
+    only the top level reports that a team which routed perfectly never
+    touched the database.
 
     **This is where evaluating a delegated system goes wrong**, and it goes
     wrong quietly, in the direction of understating your own agent.
+
+    ### Before you read any of these numbers
+
+    A team question costs eight or nine model calls and the free tier allows
+    fifteen a minute, so three of them is over budget before the third one
+    starts. You will see `429 RESOURCE_EXHAUSTED` in the output, and Agno
+    **catches it inside the run** and hands back a finished-looking result
+    rather than raising.
+
+    That matters more than the waiting. An item whose run was rate limited has
+    an empty answer and no tool calls, which is indistinguishable from an agent
+    that answered a counting question off the top of its head. Score it and you
+    have filed somebody else's quota as your agent's routing failure.
+
+    `answer_with` handles both halves: it retries while the limit lasts, and
+    when the retries run out it marks the item `error` so the evaluator returns
+    **no scores at all** for it. An item that did not run is missing from the
+    run, not failing in it. Expect these cells to sit there for a minute or two
+    printing `run came back error; waiting 12s and asking again`, and expect a
+    run over three items to sometimes report on fewer.
     """)
     return
 
@@ -640,13 +663,9 @@ def _(counting, langfuse_sync):
         """One experiment over the counting questions, for one thing that answers."""
 
         def _task(*, item, **_):
-            _out = brain.run(item.input["question"])
-            return {
-                "answer": _out.content or "",
-                # Members' tools included. See the docstring.
-                "tool_calls": langfuse_sync.tool_names(_out),
-                "retrieved_ids": [],
-            }
+            # Collects the members' tools, retries a rate-limited run, and
+            # refuses to answer at all rather than answering emptily.
+            return langfuse_sync.answer_with(brain, item.input["question"])
 
         return _get_client().run_experiment(
             name="routing",
@@ -725,15 +744,7 @@ def _(INSTRUCTIONS_GROUNDED, dataset, langfuse_sync):
     _agent = _archivist(_knowledge(), instructions=INSTRUCTIONS_GROUNDED, with_memory=False)
 
     def answer_now(*, item, **_):
-        _out = _agent.run(item.input["question"])
-        return {
-            "answer": _out.content or "",
-            "tool_calls": [_t.tool_name for _t in (_out.tools or [])],
-            # Deliberately empty. The ids in the answer are the ones it *cited*,
-            # and scoring those as "retrieved" would let a confident citation
-            # pass a retrieval check. An inapplicable check is the honest result.
-            "retrieved_ids": [],
-        }
+        return langfuse_sync.answer_with(_agent, item.input["question"])
 
     grounded = dataset.run_experiment(
         name="grounded instructions",

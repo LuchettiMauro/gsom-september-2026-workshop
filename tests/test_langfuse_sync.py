@@ -180,3 +180,89 @@ def test_a_team_run_passes_the_routing_check() -> None:
         if e.name == "check_routing"
     )
     assert routing.value == 1.0
+
+
+# --- a run that never completed is not a failing run -----------------------
+
+
+class _StatusRun:
+    def __init__(self, status, content="answer", tools=None) -> None:
+        self.status = status
+        self.content = content
+        self.tools = tools or []
+        self.member_responses = []
+
+
+class _Brain:
+    """Answers with the given statuses in order, one per call."""
+
+    def __init__(self, statuses: list) -> None:
+        self.statuses = list(statuses)
+        self.calls = 0
+
+    def run(self, _question):
+        self.calls += 1
+        return _StatusRun(self.statuses.pop(0), tools=[_Tool("query_sightings")])
+
+
+def test_a_completed_run_is_returned_straight_away() -> None:
+    from agno.run.base import RunStatus
+
+    from stargate.evaluators.langfuse_sync import answer_with
+
+    brain = _Brain([RunStatus.completed])
+    out = answer_with(brain, "how many?")
+    assert brain.calls == 1
+    assert out["tool_calls"] == ["query_sightings"]
+    assert "error" not in out
+
+
+def test_a_rate_limited_run_is_retried_then_succeeds(monkeypatch) -> None:
+    from agno.run.base import RunStatus
+
+    import stargate.providers as providers
+    from stargate.evaluators import langfuse_sync
+
+    monkeypatch.setattr(providers, "RETRY_DELAYS", (0, 0, 0))
+    brain = _Brain([RunStatus.error, RunStatus.error, RunStatus.completed])
+    out = langfuse_sync.answer_with(brain, "how many?")
+    assert brain.calls == 3
+    assert "error" not in out
+
+
+def test_a_run_that_never_completes_is_marked_rather_than_answered(monkeypatch) -> None:
+    from agno.run.base import RunStatus
+
+    import stargate.providers as providers
+    from stargate.evaluators import langfuse_sync
+
+    monkeypatch.setattr(providers, "RETRY_DELAYS", (0,))
+    brain = _Brain([RunStatus.error, RunStatus.error])
+    out = langfuse_sync.answer_with(brain, "how many?")
+    assert out["error"]
+    assert out["answer"] == ""
+
+
+def test_an_errored_output_produces_no_scores() -> None:
+    """The whole point: a quota failure must not read as a routing failure."""
+    assert (
+        deterministic_evaluator(
+            input=ITEM_INPUT,
+            output={"answer": "", "tool_calls": [], "error": "run status: error"},
+            expected_output=ITEM_EXPECTED,
+            metadata=ITEM_METADATA,
+        )
+        == []
+    )
+
+
+def test_without_the_guard_that_same_item_would_score_zero() -> None:
+    """Shows what the guard is preventing, so the test fails if it is removed."""
+    scored = deterministic_evaluator(
+        input=ITEM_INPUT,
+        output={"answer": "", "tool_calls": []},
+        expected_output=ITEM_EXPECTED,
+        metadata=ITEM_METADATA,
+    )
+    routing = next(e for e in scored if e.name == "check_routing")
+    assert routing.value == 0.0
