@@ -169,14 +169,112 @@ def _(gather, write_briefing):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Agno's version
+    ## The same three shapes, in Agno
 
-    Agno ships a `Workflow` type with named steps, so the structure shows up in
-    your traces as steps rather than as one opaque call. Same idea, better
-    observability: <https://docs.agno.com/concepts/workflows/overview>
+    You have now built all three by hand: one agent in notebook 04, a team in
+    notebook 06, and a workflow in the cell above. Here they are side by side,
+    which is the clearest way to see what actually differs.
 
-    The concept matters more than the API. You can write this with three functions
-    and no framework at all — which is rather the point.
+    Read the next cell as three answers to one question: **who decides what
+    happens next.**
+    """)
+    return
+
+
+@app.cell
+def _(db, gather, knowledge, write_briefing):
+    from agno.agent import Agent
+    from agno.team import Team
+    from agno.workflow import Step, StepInput, StepOutput, Workflow
+
+    from stargate.agents import analyst, archivist, model
+
+    # 1 — AGENT. The model decides: which tool, how many times, when to stop.
+    single = Agent(
+        name="Archivist",
+        model=model(),
+        knowledge=knowledge,
+        search_knowledge=True,
+    )
+
+    # 2 — TEAM. A router model decides which member answers.
+    crew = Team(
+        name="Research Team",
+        model=model(),
+        members=[archivist(knowledge), analyst(db)],
+    )
+
+    # 3 — WORKFLOW. You decide, once, here. No model is consulted about order.
+    def step_gather(s: StepInput) -> StepOutput:
+        return StepOutput(content=gather(int(s.input)))
+
+    def step_write(s: StepInput) -> StepOutput:
+        return StepOutput(content=write_briefing(s.previous_step_content))
+
+    pipeline = Workflow(
+        name="Briefing",
+        steps=[
+            Step(name="gather", executor=step_gather),
+            Step(name="write", executor=step_write),
+        ],
+    )
+
+    for built in (single, crew, pipeline):
+        print(f"{type(built).__name__:9}  {built.name}")
+    return (pipeline,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Three constructors, roughly five lines each, and they all take `model=`.
+    What changes is one argument:
+
+    | You pass | and you get |
+    |---|---|
+    | `tools=` / `knowledge=` | an **Agent**: the model picks from what you gave it |
+    | `members=` | a **Team**: a router model picks a colleague |
+    | `steps=` | a **Workflow**: nothing is picked, you already decided |
+
+    That is the part worth taking away. Choosing between an agent, a team and a
+    workflow sounds like an architectural commitment, and in Agno it is the name
+    of one keyword argument. The framework has made all three equally cheap to
+    build, which means **the choice is now entirely about your problem** rather
+    than about what you can afford to implement.
+
+    The steps run the same functions you already wrote. Nothing above was
+    rewritten to fit the framework:
+    """)
+    return
+
+
+@app.cell
+def _(pipeline):
+    _result = pipeline.run(input=1952)
+    print("steps:", [s.step_name for s in (_result.step_results or [])])
+    print()
+    print(_result.content[:400])
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Open that trace. The two steps appear by name, `gather` and `write`, instead
+    of one opaque call — which is the reason to use the type rather than the plain
+    function from the cell before it. `gather` shows up as a step that spent no
+    tokens at all, and that is a fact about your architecture you can now read off
+    a dashboard.
+
+    Agno has more of these: `Parallel`, `Loop`, `Condition`, `Router` for steps
+    that branch. <https://docs.agno.com/concepts/workflows/overview>
+
+    **A caveat, because the ease cuts both ways.** Swapping `steps=` for
+    `members=` takes ten seconds, so nothing stops you reaching for a team because
+    it is interesting rather than because the problem needs one. The framework
+    removed the cost of building. It did not remove the cost of running, and a
+    team still spends eight or nine model calls where the workflow above spends
+    one.
 
     ## How to choose
 
