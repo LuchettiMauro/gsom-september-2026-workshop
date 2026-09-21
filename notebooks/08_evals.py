@@ -448,13 +448,218 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    ## Step 7 · Get it out of the notebook
+
+    Everything so far printed to a cell. That was right for building and is wrong
+    for keeping: a number in a notebook is one nobody else sees, nobody compares
+    against last week, and nobody notices regressing.
+
+    Three things move to Langfuse, and no more.
+
+    **The testset becomes a dataset.** Twenty questions with their ground truth,
+    in one place the whole room can open, version and add to.
+
+    **The checks become scores on a run.** Same functions, same verdicts, now
+    attached to a dataset run instead of a `Counter`.
+
+    **The run becomes comparable.** Which is the only reason to do any of this:
+    two runs side by side is what turns *"I changed the instructions"* into
+    *"I changed the instructions and citation went from 0.15 to 0.80"*.
+
+    The plumbing is one small module. Read it — it decides nothing, it only
+    changes where the results end up.
+    """)
+    return
+
+
+@app.cell
+def _():
+    import inspect as _inspect
+
+    from stargate.evaluators import langfuse_sync
+
+    print(_inspect.getsource(langfuse_sync.deterministic_evaluator))
+    return (langfuse_sync,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Note the last line: a check that does not apply is **dropped**, never scored
+    zero. Langfuse averages what you hand it, so scoring an inapplicable check
+    zero would quietly turn the `of` column from earlier into a lie that now has
+    a dashboard behind it.
+
+    ### Push the testset
+    """)
+    return
+
+
+@app.cell
+def _(langfuse_sync, traces):
+    from stargate.observability import enable_tracing as _enable_tracing
+
+    _client = _enable_tracing()
+    if _client is None:
+        print("No Langfuse keys in .env — the rest of this step needs them.")
+    else:
+        _n = langfuse_sync.push_dataset(traces)
+        print(f"{_n} items in dataset '{langfuse_sync.DATASET_NAME}'")
+        print("Langfuse sidebar → Datasets. It is there now.")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Open it. Every item carries the question as input, the ground truth as
+    expected output, and what the agent did last week in metadata.
+
+    Run that cell twice and the dataset stays at twenty items: `push_dataset`
+    gives each item an id derived from its trace, and Langfuse upserts on it.
+    The alternative, which everyone writes first, is a testset that doubles
+    every time somebody re-runs a cell.
+
+    ### Run one: last week, scored
+
+    The first run replays the answers the session-1 agent actually gave. **No
+    model is called** — the answers already exist, and this is what puts last
+    week's failures on the board as a baseline.
+    """)
+    return
+
+
+@app.cell
+def _(langfuse_sync):
+    from langfuse import get_client
+
+    dataset = get_client().get_dataset(langfuse_sync.DATASET_NAME)
+
+    def replay(*, item, **_):
+        """Hand back what the agent said at the time. Costs nothing."""
+        return {
+            "answer": item.metadata["recorded_answer"],
+            "tool_calls": item.metadata["recorded_tool_calls"],
+            "retrieved_ids": item.metadata["recorded_retrieved_ids"],
+        }
+
+    baseline = dataset.run_experiment(
+        name="session-1 instructions",
+        # Without run_name Langfuse builds one from the experiment name, an ISO
+        # timestamp and the description, which is unreadable in the Runs list.
+        # A fixed name also means re-running this cell updates the same run
+        # instead of leaving a trail of near-identical ones.
+        run_name="session-1",
+        task=replay,
+        evaluators=[langfuse_sync.deterministic_evaluator],
+        run_evaluators=[langfuse_sync.pass_rate],
+    )
+    print(baseline.format())
+    return (dataset,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    That prints the run, and the numbers are the whole error analysis in five
+    lines:
+
+    ```
+    check_routing:    0.000      check_language:  0.950
+    check_citation:   0.050      check_retrieval: 0.889
+    check_refusal:    0.000      pass_rate:       0.519
+    ```
+
+    Every counting question was answered without touching SQL. One answer in
+    twenty cited anything. The agent never once said it did not know. None of
+    that is a surprise by now, and that is the point: you found it by reading
+    traces in step 1, and the dashboard is only agreeing with you.
+
+    Now the screen that matters: **Datasets → `stargate-eval` → Runs**. One row,
+    with `pass_rate` and one column per check. Click into it and every item shows
+    its own scores with the `detail` string as the comment, which is the same
+    text the notebook printed earlier.
+
+    ### Run two: change one thing
+
+    Same dataset, same evaluators, one difference — the agent answers now, with
+    the instructions the measurements argued for.
+
+    **This one costs model calls**, one agent run per item, so budget a few
+    minutes. `max_concurrency=2` keeps it under the free tier's fifteen requests
+    a minute.
+    """)
+    return
+
+
+@app.cell
+def _(INSTRUCTIONS_GROUNDED, dataset, langfuse_sync):
+    from stargate.agents import archivist as _archivist
+    from stargate.knowledge import knowledge_from_existing as _knowledge
+
+    _agent = _archivist(_knowledge(), instructions=INSTRUCTIONS_GROUNDED, with_memory=False)
+
+    def answer_now(*, item, **_):
+        _out = _agent.run(item.input["question"])
+        return {
+            "answer": _out.content or "",
+            "tool_calls": [_t.tool_name for _t in (_out.tools or [])],
+            # Deliberately empty. The ids in the answer are the ones it *cited*,
+            # and scoring those as "retrieved" would let a confident citation
+            # pass a retrieval check. An inapplicable check is the honest result.
+            "retrieved_ids": [],
+        }
+
+    grounded = dataset.run_experiment(
+        name="grounded instructions",
+        run_name="grounded",
+        task=answer_now,
+        evaluators=[langfuse_sync.deterministic_evaluator],
+        run_evaluators=[langfuse_sync.pass_rate],
+        max_concurrency=2,
+    )
+    print(grounded.format())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Back to **Datasets → `stargate-eval` → Runs**, where there are now two rows.
+    Tick both and Langfuse puts them side by side, per check and per item.
+
+    Read `check_citation` first. Session 1 was never told to cite anything, so
+    the baseline is close to zero and the new run should not be. If it did not
+    move, the instruction did not work, and you would never have known.
+
+    Then read `check_retrieval` and notice it is empty for the live run. That is
+    the comment in the task cell doing its job: the run had nothing to look at,
+    and it says so rather than inventing a pass.
+
     ## Postscript: the button
 
-    Langfuse will run an LLM judge for you on every trace, forever, configured
-    through a form: pick a model, paste a prompt, choose a score name.
+    Langfuse will run a judge for you on every trace, forever, configured through
+    a form. You have earned the right to read that form properly, so go and fill
+    it in: **Evaluators → + New evaluator** in the sidebar.
 
-    Go and look at it now — **Evaluators** in the sidebar. You will recognise every
-    field, because you just built each one by hand.
+    | The form asks for | You built it in |
+    |---|---|
+    | a prompt with `{{input}}` / `{{output}}` variables | `build_judge_prompt` |
+    | the scoring scale and what each value means | `RUBRIC` |
+    | a model and its temperature | the `genai` call in step 4 |
+    | how to parse the reply into a score | `parse_verdict` |
+    | which traces to run on, and on what share of them | the loop in step 4 |
+
+    Configure it against the **source/claim conflation** category, because that
+    is the one your error analysis said code cannot catch. Point it at this
+    project's traces, set the sampling low to start with, and give the score the
+    same name your local judge uses so the two are comparable.
+
+    Then do the thing almost nobody does: **run it on the twenty traces you
+    labelled by hand**, and put its numbers through step 5. You already have the
+    labels and you already have `confusion_matrix`. A configured judge is exactly
+    as trustworthy as a written one, which is to say: as trustworthy as its
+    agreement with you, and not one point more.
 
     That is the whole reason we did it the long way round. A judge you configured
     is a box you trust. A judge you wrote, aligned against human labels, and found

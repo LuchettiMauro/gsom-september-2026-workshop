@@ -189,6 +189,7 @@ STEPS: list[tuple[str, str, list[str]]] = [
             "tests/test_deterministic.py",
             "tests/test_judge.py",
             "tests/test_alignment.py",
+            "tests/test_langfuse_sync.py",
         ],
     ),
     (
