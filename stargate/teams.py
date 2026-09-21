@@ -30,13 +30,22 @@ TEAM_INSTRUCTIONS = [
 ]
 
 
-def research_team(knowledge: Any = None, *, with_memory: bool = True, **kwargs: Any) -> Any:
+def research_team(
+    knowledge: Any = None,
+    *,
+    instructions: list[str] | None = None,
+    with_memory: bool = True,
+    **kwargs: Any,
+) -> Any:
     """A router plus the two specialists.
 
     Args:
         knowledge: passed to the Archivist. Without it the Archivist has no
             documents to search and will fall back on the model's own memory —
             which is itself an instructive thing to watch happen.
+        instructions: defaults to `TEAM_INSTRUCTIONS`. Notebook 08 passes a
+            version with the delegation line removed, to measure what that one
+            sentence is worth.
     """
     from agno.db.sqlite import SqliteDb
     from agno.team import Team
@@ -48,7 +57,7 @@ def research_team(knowledge: Any = None, *, with_memory: bool = True, **kwargs: 
             archivist(knowledge, with_memory=False),
             analyst(with_memory=False),
         ],
-        instructions=TEAM_INSTRUCTIONS,
+        instructions=instructions or TEAM_INSTRUCTIONS,
         db=SqliteDb(db_file=str(SESSION_DB)) if with_memory else None,
         show_members_responses=True,
         markdown=True,

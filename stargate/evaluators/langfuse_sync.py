@@ -75,6 +75,30 @@ def push_dataset(
     return len(traces)
 
 
+# --- reading what a run actually did ---------------------------------------
+
+
+def tool_names(run_output: Any) -> list[str]:
+    """Every tool called during a run, the members' own included.
+
+    A Team's own `tools` holds `delegate_task_to_member` and nothing else: the
+    SQL call happened one level down, inside the member the router picked.
+    Reading only the top level is how an evaluator concludes that a team which
+    routed perfectly never touched the database, and `check_routing` then
+    reports a failure that did not happen.
+
+    Recursive, because a member can itself be a team.
+    """
+    names = [
+        tool.tool_name
+        for tool in (getattr(run_output, "tools", None) or [])
+        if getattr(tool, "tool_name", None)
+    ]
+    for member in getattr(run_output, "member_responses", None) or []:
+        names.extend(tool_names(member))
+    return names
+
+
 # --- turning a task's output back into something the checks understand -----
 
 

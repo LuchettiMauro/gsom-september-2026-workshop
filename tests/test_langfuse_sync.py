@@ -117,3 +117,66 @@ def test_pass_rate_says_so_when_nothing_applied() -> None:
     score = pass_rate(item_results=[_Result([])])
     assert score.value == 0.0
     assert "no check applied" in (score.comment or "")
+
+
+# --- reading tool calls out of a delegated run -----------------------------
+
+
+class _Tool:
+    def __init__(self, tool_name: str) -> None:
+        self.tool_name = tool_name
+
+
+class _Run:
+    def __init__(self, tools: list, member_responses: list | None = None) -> None:
+        self.tools = tools
+        self.member_responses = member_responses or []
+
+
+def test_tool_names_reaches_into_the_members_of_a_team() -> None:
+    """The router's own tool list says 'delegate' and nothing about SQL."""
+    from stargate.evaluators.langfuse_sync import tool_names
+
+    team_run = _Run(
+        tools=[_Tool("delegate_task_to_member")],
+        member_responses=[_Run(tools=[_Tool("query_sightings")])],
+    )
+    assert tool_names(team_run) == ["delegate_task_to_member", "query_sightings"]
+
+
+def test_tool_names_recurses_through_a_nested_team() -> None:
+    from stargate.evaluators.langfuse_sync import tool_names
+
+    nested = _Run(
+        tools=[],
+        member_responses=[_Run(tools=[], member_responses=[_Run(tools=[_Tool("run_sql")])])],
+    )
+    assert tool_names(nested) == ["run_sql"]
+
+
+def test_tool_names_of_a_plain_agent_run() -> None:
+    from stargate.evaluators.langfuse_sync import tool_names
+
+    assert tool_names(_Run(tools=[_Tool("search_knowledge_base")])) == ["search_knowledge_base"]
+    assert tool_names(_Run(tools=[])) == []
+
+
+def test_a_team_run_passes_the_routing_check() -> None:
+    """End to end: delegated SQL has to satisfy check_routing."""
+    from stargate.evaluators.langfuse_sync import tool_names
+
+    team_run = _Run(
+        tools=[_Tool("delegate_task_to_member")],
+        member_responses=[_Run(tools=[_Tool("query_sightings")])],
+    )
+    routing = next(
+        e
+        for e in deterministic_evaluator(
+            input=ITEM_INPUT,
+            output={"answer": "32 sightings.", "tool_calls": tool_names(team_run)},
+            expected_output=None,
+            metadata=None,
+        )
+        if e.name == "check_routing"
+    )
+    assert routing.value == 1.0

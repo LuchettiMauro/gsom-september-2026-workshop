@@ -580,6 +580,131 @@ def _(mo):
     its own scores with the `detail` string as the comment, which is the same
     text the notebook printed earlier.
 
+    ### The number a prompt cannot move
+
+    `check_routing` is at **0.000**, and it is the most interesting zero on the
+    board. Before changing anything, look at what the check actually asks:
+
+    > was a counting question answered with SQL?
+
+    The archivist has one tool, and it searches documents. No instruction you
+    write can make it call a database it was never given. **A prompt can only
+    move a number the tools put within reach**, and this is the cleanest example
+    of it in the whole course.
+
+    The check applies to three of the twenty items, so the experiment runs on
+    those three. That is not a shortcut to save calls: `check_routing` returns
+    "not applicable" for the other seventeen, and an experiment about routing
+    belongs on the items routing is about.
+    """)
+    return
+
+
+@app.cell
+def _(dataset, langfuse_sync):
+    from stargate.evaluators.deterministic import looks_like_a_counting_question
+
+    counting = [i for i in dataset.items if looks_like_a_counting_question(i.input["question"])]
+    for _i in counting:
+        print("-", _i.input["question"])
+    return counting, looks_like_a_counting_question
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Three runs over those three items, one architecture and two prompts.
+
+    Note `tool_names` in the task below, and read its docstring. A team's own
+    tool list says `delegate_task_to_member` and nothing else — the SQL call
+    happened one level down, inside the member the router picked. An evaluator
+    that reads only the top level reports that a team which routed perfectly
+    never touched the database.
+
+    **This is where evaluating a delegated system goes wrong**, and it goes
+    wrong quietly, in the direction of understating your own agent.
+    """)
+    return
+
+
+@app.cell
+def _(counting, langfuse_sync):
+    from langfuse import get_client as _get_client
+
+    from stargate.knowledge import knowledge_from_existing as _knowledge_for_routing
+    from stargate.teams import TEAM_INSTRUCTIONS, research_team
+
+    shared_knowledge = _knowledge_for_routing()
+
+    def routing_run(run_name, brain):
+        """One experiment over the counting questions, for one thing that answers."""
+
+        def _task(*, item, **_):
+            _out = brain.run(item.input["question"])
+            return {
+                "answer": _out.content or "",
+                # Members' tools included. See the docstring.
+                "tool_calls": langfuse_sync.tool_names(_out),
+                "retrieved_ids": [],
+            }
+
+        return _get_client().run_experiment(
+            name="routing",
+            run_name=run_name,
+            data=counting,
+            task=_task,
+            evaluators=[langfuse_sync.deterministic_evaluator],
+            run_evaluators=[langfuse_sync.pass_rate],
+            max_concurrency=1,
+        )
+
+    # The delegation line, removed. This is the one thing that changes.
+    VAGUER = [i for i in TEAM_INSTRUCTIONS if "Never answer a numeric question" not in i]
+    print("removed:", [i for i in TEAM_INSTRUCTIONS if i not in VAGUER])
+    return VAGUER, research_team, routing_run, shared_knowledge
+
+
+@app.cell
+def _(VAGUER, shared_knowledge, research_team, routing_run):
+    _vague = routing_run(
+        "routing-team-vague",
+        research_team(shared_knowledge, instructions=VAGUER, with_memory=False),
+    )
+    print(_vague.format())
+    return
+
+
+@app.cell
+def _(shared_knowledge, research_team, routing_run):
+    _full = routing_run(
+        "routing-team",
+        research_team(shared_knowledge, with_memory=False),
+    )
+    print(_full.format())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    **Datasets → `stargate-eval` → Runs**, tick `session-1`, `routing-team-vague`
+    and `routing-team`, and read the `check_routing` column down.
+
+    The baseline cannot win: one agent, no database. The vague team can win and
+    may not, because nothing told the router that a number is somebody else's
+    job. The full team has that one sentence, and it is the only difference
+    between the last two rows.
+
+    Whatever the middle number turns out to be, the shape of the finding is the
+    same and it is worth saying out loud: **one architecture change made the
+    number reachable, one sentence made it likely.** Reporting only the second
+    would be the usual prompt-engineering story, and it would be the smaller
+    half of the truth.
+
+    If the two team runs come out identical, that is a result too. It means the
+    router was already delegating and the sentence is buying you nothing, which
+    is one line you can now delete with evidence.
+
     ### Run two: change one thing
 
     Same dataset, same evaluators, one difference — the agent answers now, with
