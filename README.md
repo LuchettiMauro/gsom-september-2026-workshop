@@ -55,6 +55,36 @@ uv run python scripts/check.py
 > regenerated and force-pushed between sessions, so work committed directly
 > onto one is overwritten without warning.
 
+### Picking up a fix
+
+The material gets corrected between and during the sessions. When you are told
+there is an update, run this in a terminal that is **not** the one holding
+marimo. You stay on your own branch; it brings `main` into it.
+
+```bash
+git add -A; git commit -m "my work"; git pull --no-rebase --no-edit origin main
+```
+
+If it says `nothing to commit, working tree clean`, that is fine: it means you
+had nothing of your own to save, and the update still arrives on the line after.
+
+Then **shut the notebook down and reopen it**: marimo's home page, *Running
+notebooks*, the round Shutdown button on its row. A running notebook keeps the
+old version of every `stargate` module it has already imported, so without this
+you re-run exactly the code that was just fixed.
+
+<details>
+<summary>Why the command looks like that</summary>
+
+Three separators worth their space. The `;` rather than `&&`, because
+`git commit` exits non-zero when there is nothing to commit and would stop the
+line before it ever pulled. `--no-rebase`, because your branch and `main` have
+both moved and git otherwise stops with *"Need to specify how to reconcile
+divergent branches"*. `--no-edit`, because git otherwise opens an editor tab
+for the merge message and waits for you to close it.
+
+</details>
+
 ---
 
 ## Running the notebooks
