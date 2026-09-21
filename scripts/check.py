@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import json
 import os
 import shutil
 import subprocess
@@ -126,9 +127,28 @@ def check_cloudflared() -> Result:
 
 
 def check_data() -> Result:
+    """Present and usable, rather than complete.
+
+    A partial corpus is worth saying out loud and is not worth failing over:
+    the workshop reads whatever is on disk, and a document the reading room
+    refused during the build comes back on the next fetch.
+    """
     docs = len(list(DOCS_DIR.glob("*.md"))) if DOCS_DIR.exists() else 0
     if docs == 0 or not PARQUET.exists():
         return ("data", "MISSING", "Run `uv run python scripts/fetch_data.py`.")
+
+    manifest = DOCS_DIR.parent / "corpus_manifest.json"
+    try:
+        expected = len(json.loads(manifest.read_text(encoding="utf-8"))["documents"])
+    except (OSError, ValueError, KeyError):
+        expected = docs
+    if docs < expected:
+        return (
+            "data",
+            OK,
+            f"{docs} of {expected} documents, sightings parquet present — "
+            "`uv run python scripts/fetch_data.py` fetches the rest",
+        )
     return ("data", OK, f"{docs} documents, sightings parquet present")
 
 

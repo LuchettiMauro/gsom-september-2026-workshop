@@ -19,6 +19,7 @@ import csv
 import io
 import json
 import sys
+import time
 import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -33,6 +34,13 @@ PARQUET = DATA / "nuforc.parquet"
 SIGHTINGS_CSV = "https://corgis-edu.github.io/corgis/datasets/csv/ufo_sightings/ufo_sightings.csv"
 USER_AGENT = "polimi-workshop/0.1 (teaching material)"
 TIMEOUT = 60
+
+# The reading room answers a 500 often enough to matter. Retrying costs a few
+# seconds; not retrying used to cost the whole container, because this script
+# runs from setup.sh under `set -e` and a failed onCreateCommand drops the
+# Codespace into a recovery image with none of the toolchain in it.
+RETRY_ON = frozenset({429, 500, 502, 503, 504})
+ATTEMPTS = 3
 
 # corgis column -> ours. Anything not listed is dropped.
 COLUMNS = {
@@ -55,9 +63,22 @@ INTEGER = {"year", "month", "day", "hour", "minute"}
 
 
 def get(url: str) -> bytes:
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
-        return bytes(response.read())
+    """Fetch a URL, retrying the failures that are the server having a bad day."""
+    for attempt in range(1, ATTEMPTS + 1):
+        try:
+            request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+            with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
+                return bytes(response.read())
+        except urllib.error.HTTPError as exc:
+            # A 404 is a manifest that has gone stale, and no amount of asking
+            # again will fix it. Only the transient codes are worth a retry.
+            if exc.code not in RETRY_ON or attempt == ATTEMPTS:
+                raise
+        except (urllib.error.URLError, TimeoutError):
+            if attempt == ATTEMPTS:
+                raise
+        time.sleep(2**attempt)
+    raise AssertionError("unreachable")
 
 
 # --- documents -------------------------------------------------------------

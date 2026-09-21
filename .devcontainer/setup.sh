@@ -23,7 +23,17 @@ echo "--- dependencies"
 uv sync --extra serve
 
 echo "--- corpus"
-uv run python scripts/fetch_data.py
+# Deliberately not fatal. This script is the onCreateCommand and runs under
+# `set -e`: a non-zero exit here fails container creation outright, and
+# Codespaces replaces the container with a recovery image on Alpine that has
+# no toolchain, no corpus, and none of the ports devcontainer.json forwards.
+# One document the reading room refuses today is not worth that.
+if ! uv run python scripts/fetch_data.py; then
+  echo
+  echo "WARNING: the corpus is incomplete, and the container is otherwise fine."
+  echo "         The workshop runs on what did download. To retry the rest:"
+  echo "             uv run python scripts/fetch_data.py"
+fi
 
 echo "--- embedding model"
 # ~80 MB from Hugging Face. FASTEMBED_CACHE_PATH puts it under data/.cache so
