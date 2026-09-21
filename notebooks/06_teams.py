@@ -40,17 +40,42 @@ def _(documents_only):
     return
 
 
+@app.cell
+def _():
+    # The answer, from the table the agent was never given.
+    from stargate.sightings import SightingsDB as _SightingsDB
+
+    print(f"the sightings table says: {_SightingsDB().count(year=1952):,}")
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    Check that number.
+    **32.** Now look at what the agent told you, because it will have done one of
+    two things, and they are the same failure.
 
-    It has no access to the sightings table. Whatever it said came from a
-    retrieved memo, or from nothing at all — and it very likely said it with
-    complete confidence.
+    It may have given you a number. It has one tool and that tool searches
+    documents, so any figure in that answer was read off a memo that happened to
+    mention one, or invented outright. The recorded answer to this question in
+    `data/example_traces.json`, which notebook 08 scores, is *"well over a
+    thousand"*. The answer is 32.
 
-    Hold on to this. It is going to show up as a failure category in the next
-    notebook, and it is the most common one in the room.
+    Or it may have told you, politely and correctly, that the declassified files
+    do not contain sighting counts. Newer models refuse far more readily than the
+    ones this material was first written against, and the refusal reads like good
+    behaviour. **It is not.** The number exists. It is 32, it is in this
+    repository, and it is in a table the agent was never given.
+
+    One lies and the other shrugs, and the architectural fact underneath is
+    identical: **the question was routed to the wrong half of the corpus.** That
+    is what notebook 08 measures, and `check_routing` does not care which of the
+    two you got — it asks whether a counting question reached SQL, and the answer
+    is no either way.
+
+    Hold on to this. It is the most common failure category in the room, and if
+    you got the refusal rather than the invention, notice that you would have
+    called it a success.
 
     ## Don't take that on trust
 
@@ -325,7 +350,8 @@ def _(mo):
     — which is why this team has two members and not five.
 
     Routing is not free. Neither is delegation. Both are worth it *when the
-    alternative is a confidently invented number*, and not otherwise.
+    alternative is a confidently invented number, or a refusal to answer one you
+    could have*, and not otherwise.
 
     ---
 

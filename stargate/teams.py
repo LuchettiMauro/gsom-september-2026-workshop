@@ -6,10 +6,14 @@ member the router consults costs calls. A five-member team is roughly one
 question per minute, which is not a workshop.
 
 The team exists because the corpus genuinely has two shapes. Narrative memos
-belong in a vector store; 148,000 structured sighting records belong in SQL.
-Asking "how many sightings in 1952?" of a vector store is how you get a
-confidently invented number — which is the single most common failure students
-find in session 2.
+belong in a vector store; 60,632 structured sighting records belong in SQL.
+Asking "how many sightings in 1952?" of a vector store gets you one of two
+answers, and they are the same failure: a confidently invented number, or a
+correct refusal to answer a question the repository can in fact answer. The
+truth is 32, and it is in the table the vector store cannot reach. Which of
+the two you get depends on the model; that the question went to the wrong half
+of the corpus does not. It is the most common failure category students find
+in session 2.
 """
 
 from __future__ import annotations

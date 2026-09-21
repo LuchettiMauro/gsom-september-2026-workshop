@@ -16,8 +16,10 @@ import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
-# Tools that constitute "asked the database". Anything else answering a
-# counting question means the model made the number up.
+# Tools that constitute "asked the database". A counting question answered
+# without one of these went to the wrong half of the corpus, and the check says
+# so whether the answer was an invented number or an honest "I don't know" —
+# a refusal is cheaper to read and no more correct.
 SQL_TOOLS = frozenset({"count_sightings", "query_sightings", "duckdb", "run_sql"})
 
 _COUNTING = re.compile(
